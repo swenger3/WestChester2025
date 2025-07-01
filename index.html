@@ -51,6 +51,17 @@
             color: #9A9A9A;
             text-decoration: line-through;
         }
+        .gdoc-template {
+            background-color: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 500px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -62,7 +73,7 @@
                 <h1 class="text-xl font-semibold text-[#C06C56]">Allegheny Hall Guide</h1>
                 <div class="hidden md:flex items-center space-x-6">
                     <a href="#overview" class="nav-link text-gray-600 font-medium pb-1">Overview</a>
-                    <a href="#essentials" class="nav-link text-gray-600 font-medium pb-1">Essentials</a>
+                    <a href="#planning-hub" class="nav-link text-gray-600 font-medium pb-1">Roommate Plan</a>
                     <a href="#shopping" class="nav-link text-gray-600 font-medium pb-1">Shop The Look</a>
                     <a href="#checklist" class="nav-link text-gray-600 font-medium pb-1">Checklist</a>
                 </div>
@@ -75,7 +86,7 @@
              <!-- Mobile Menu -->
             <div id="mobile-menu" class="hidden md:hidden mt-3">
                 <a href="#overview" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100 rounded">Overview</a>
-                <a href="#essentials" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100 rounded">Essentials</a>
+                <a href="#planning-hub" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100 rounded">Roommate Plan</a>
                 <a href="#shopping" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100 rounded">Shop The Look</a>
                 <a href="#checklist" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100 rounded">Checklist</a>
             </div>
@@ -127,24 +138,24 @@
                 </div>
             </div>
             
-            <!-- Rules and Regs -->
             <div class="bg-white rounded-lg shadow-lg p-8">
                 <h3 class="text-2xl font-bold mb-4 text-gray-800">Key Rules & Regulations</h3>
                 <div id="rules-container">
-                    <!-- Accordion Items will be injected by JS -->
                 </div>
             </div>
         </section>
 
-        <!-- Essentials Section -->
-        <section id="essentials" class="mb-20 pt-16 -mt-16">
-            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">Room Essentials & Organization</h2>
-             <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-12">Transform your room from a blank slate into a comfortable and organized personal haven. This section covers the foundational items for comfort, smart storage solutions to maximize your space, and the practical necessities for study and cleaning.</p>
-            <div id="essentials-container" class="space-y-12">
-                <!-- Content injected by JS -->
+        <!-- Roommate Planning Hub Section -->
+        <section id="planning-hub" class="mb-20 pt-16 -mt-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">Roommate Planning Hub</h2>
+            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-8">Hey Autumn & Jess! Planning your shared spaces is the first step to a great year. Use this template to coordinate who's bringing what. Just copy the text below and paste it into a new Google Doc to start collaborating!</p>
+            <div class="gdoc-template" id="gdoc-template-content">
+                <!-- Google Doc Template Content will be injected by JS -->
             </div>
+            <button id="copy-btn" class="mt-4 mx-auto block bg-[#C06C56] text-white font-bold py-2 px-6 rounded-lg hover:bg-opacity-90 transition-colors">Copy Plan to Clipboard</button>
+            <div id="copy-success" class="text-center mt-2 text-green-600 font-medium hidden">Copied to clipboard!</div>
         </section>
-        
+
         <!-- Interactive Chart Section -->
         <section class="mb-20 pt-16 -mt-16">
             <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">Data-Driven Decisions</h2>
@@ -163,14 +174,10 @@
             <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">Shop The Look</h2>
             <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-8">This curated shopping guide brings the essentials list to life. Filter by category to find exactly what you need. Each item features three hand-picked, highly-rated options from Amazon to fit any budget or style.</p>
             
-            <!-- Filter Buttons -->
             <div id="filter-container" class="flex flex-wrap justify-center gap-2 mb-10">
-                <!-- Filters injected by JS -->
             </div>
             
-            <!-- Shopping Grid -->
             <div id="shopping-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Product cards injected by JS -->
             </div>
         </section>
 
@@ -180,7 +187,6 @@
              <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-12">Use this interactive checklist to track your shopping and packing. Check items off as you go to make sure nothing gets left behind. Happy packing!</p>
             <div class="bg-white p-8 rounded-lg shadow-lg">
                 <div id="checklist-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-4">
-                    <!-- Checklist items will be injected by JS -->
                 </div>
             </div>
         </section>
@@ -201,24 +207,6 @@
                 { title: 'Decorations', content: 'The university has strict rules to prevent wall damage. Students are not permitted to use nails, screws, duct tape, or other damaging adhesives. The officially recommended method for hanging items is white hanging putty. This makes removable adhesive strips and hooks an absolute necessity for any wall decor.' },
                 { title: 'Appliances', content: 'For fire safety, certain items are strictly prohibited, including halogen lamps, hot plates, toaster ovens, and space heaters. The university has a partnership for students to rent an approved "Microfridge" unit. If students choose to bring their own, they must adhere to strict size limitations: refrigerators cannot be larger than 3.6 cubic feet, and microwaves cannot exceed 0.7 cubic feet.' },
                 { title: 'In-Suite Bathrooms', content: 'The in-suite bathroom is a significant luxury, but it also transfers the responsibility of cleaning and stocking from the university to the residents. Suitemates must supply their own toilet paper, hand soap, and all necessary cleaning products.' }
-            ];
-
-            const essentialsData = [
-                { 
-                    title: 'The Comfort Core', 
-                    icon: '🌙',
-                    content: 'In a dorm, your bed is your castle. It serves as a sofa, a study spot, and a sanctuary. Investing in comfort here pays dividends all year. A 3-4 inch mattress topper is essential to upgrade the notoriously firm dorm mattress. A waterproof mattress protector is a non-negotiable for hygiene. Finally, bring at least two quality pillows to ensure restful sleep.'
-                },
-                { 
-                    title: 'Smart Storage & Organization', 
-                    icon: '📦',
-                    content: 'With a ~170 sq. ft. shared bedroom, every inch counts. Use the 31" under-bed clearance with tall bins, not shallow trays. Maximize closet space with slim velvet hangers and hanging organizers. Utilize the back of your door with over-the-door storage for shoes, snacks, or toiletries to keep floors clear.'
-                },
-                {
-                    title: 'The Study Zone & Daily Life',
-                    icon: '📚',
-                    content: 'A functional study space is key. An LED desk lamp is required (no halogens). Since outlets are scarce, a surge protector with USB ports is a must-have. For cleaning, a lightweight stick vacuum is perfect for the carpeted floors, and a mesh shower caddy is best for the in-suite bathroom as it dries quickly and prevents mildew.'
-                }
             ];
 
             const shoppingData = [
@@ -303,6 +291,131 @@
                 'Removable Hooks/Putty', 'Full-Length Mirror', 'Fan', 'First-Aid Kit', 'Umbrella'
             ];
 
+            const gdocTemplate = `
+Our WCU Dorm Room Plan! - Autumn & Jess
+Welcome, roomie! Use this doc to plan our amazing Allegheny Hall suite. Let's figure out who is bringing what for the shared spaces and keep track of our own stuff.
+
+----------------------------------------------------
+SHARED SPACES: LIVING ROOM & KITCHENETTE
+Let's decide on these together to avoid duplicates!
+----------------------------------------------------
+
+| Item                 | Who's Bringing It? (Autumn/Jess/Both?) | Notes / Decision / Link                                                                                                 |
+|----------------------|----------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| Area Rug             |                                        |                                                                                                                         |
+| Futon or Small Couch |                                        |                                                                                                                         |
+| Coffee Table         |                                        |                                                                                                                         |
+| TV / Media Stand     |                                        |                                                                                                                         |
+| Mini-Fridge          |                                        | Rent or buy? (Max 3.6 cu. ft.)                                                                                          |
+| Microwave            |                                        | Rent or buy? (Max 0.7 cu. ft.)                                                                                          |
+| Coffee Maker         |                                        | Top Pick: Keurig K-Mini - https://www.amazon.com/dp/B07D385X4D                                                            |
+| Stick Vacuum         |                                        | Top Pick: Bissell Featherweight - https://www.amazon.com/dp/B07G36Y4Z7                                                    |
+| Water Filter Pitcher |                                        |                                                                                                                         |
+| Trash Can (Kitchen)  |                                        |                                                                                                                         |
+
+----------------------------------------------------
+SHARED BATHROOM (per two suitemates)
+We'll share one bathroom. Let's split these.
+----------------------------------------------------
+
+| Item                  | Who's Bringing It? (Autumn/Jess) | Notes / Link                                                                                                   |
+|-----------------------|----------------------------------|----------------------------------------------------------------------------------------------------------------|
+| Shower Curtain & Liner |                                  |                                                                                                                |
+| Bath Mat              |                                  |                                                                                                                |
+| Bathroom Trash Can    |                                  |                                                                                                                |
+| Toilet Brush          |                                  |                                                                                                                |
+| Cleaning Supplies     |                                  | All-purpose cleaner, toilet bowl cleaner, glass cleaner. We can buy these together when we get there.            |
+
+----------------------------------------------------
+AUTUMN'S PERSONAL CHECKLIST
+----------------------------------------------------
+
+**BEDDING & COMFORT**
+[ ] Twin XL Mattress Topper (Top Pick: ViscoSoft - https://www.amazon.com/dp/B075SGF3W5)
+[ ] Twin XL Mattress Protector (Top Pick: SafeRest - https://www.amazon.com/dp/B003PWNH4Q)
+[ ] Sleeping Pillows (Set of 2) (Best Value: Beckham Hotel - https://www.amazon.com/dp/B01LYU7V4S)
+[ ] Twin XL Sheet Sets (2) (Top Pick: Mellanni - https://www.amazon.com/dp/B00NLLUP24)
+[ ] Twin XL Comforter
+[ ] Headboard
+[ ] Throw Blanket
+[ ] Decorative Pillows
+
+**STORAGE & ORGANIZATION**
+[ ] Under-Bed Storage Bins (Top Pick: IRIS Weathertight - https://www.amazon.com/dp/B07L1D1V4J)
+[ ] Velvet Hangers (Top Pick: Amazon Basics - https://www.amazon.com/dp/B00FXNAAW2)
+[ ] Hanging Closet Organizer
+[ ] Over-the-Door Organizer (Top Pick: SimpleHouseware - https://www.amazon.com/dp/B07G36Y4Z7)
+[ ] Desk Organizer
+
+**BATHROOM & PERSONAL**
+[ ] Mesh Shower Caddy
+[ ] Bath Towels (2 sets)
+[ ] Hand Towels & Washcloths
+[ ] Full-Length Mirror
+
+**TECH & STUDY**
+[ ] Laptop & Charger
+[ ] Phone & Charger
+[ ] Surge Protector (Top Pick: Anker - https://www.amazon.com/dp/B07G36Y4Z7)
+[ ] LED Desk Lamp (Top Pick: Lepro - https://www.amazon.com/dp/B07G36Y4Z7)
+[ ] Backpack
+[ ] Fan
+
+----------------------------------------------------
+JESS'S PERSONAL CHECKLIST
+----------------------------------------------------
+
+**BEDDING & COMFORT**
+[ ] Twin XL Mattress Topper (Top Pick: ViscoSoft - https://www.amazon.com/dp/B075SGF3W5)
+[ ] Twin XL Mattress Protector (Top Pick: SafeRest - https://www.amazon.com/dp/B003PWNH4Q)
+[ ] Sleeping Pillows (Set of 2) (Best Value: Beckham Hotel - https://www.amazon.com/dp/B01LYU7V4S)
+[ ] Twin XL Sheet Sets (2) (Top Pick: Mellanni - https://www.amazon.com/dp/B00NLLUP24)
+[ ] Twin XL Comforter
+[ ] Headboard
+[ ] Throw Blanket
+[ ] Decorative Pillows
+
+**STORAGE & ORGANIZATION**
+[ ] Under-Bed Storage Bins (Top Pick: IRIS Weathertight - https://www.amazon.com/dp/B07L1D1V4J)
+[ ] Velvet Hangers (Top Pick: Amazon Basics - https://www.amazon.com/dp/B00FXNAAW2)
+[ ] Hanging Closet Organizer
+[ ] Over-the-Door Organizer (Top Pick: SimpleHouseware - https://www.amazon.com/dp/B07G36Y4Z7)
+[ ] Desk Organizer
+
+**BATHROOM & PERSONAL**
+[ ] Mesh Shower Caddy
+[ ] Bath Towels (2 sets)
+[ ] Hand Towels & Washcloths
+[ ] Full-Length Mirror
+
+**TECH & STUDY**
+[ ] Laptop & Charger
+[ ] Phone & Charger
+[ ] Surge Protector (Top Pick: Anker - https://www.amazon.com/dp/B07G36Y4Z7)
+[ ] LED Desk Lamp (Top Pick: Lepro - https://www.amazon.com/dp/B07G36Y4Z7)
+[ ] Backpack
+[ ] Fan
+`;
+            document.getElementById('gdoc-template-content').textContent = gdocTemplate.trim();
+
+            const copyBtn = document.getElementById('copy-btn');
+            const copySuccess = document.getElementById('copy-success');
+            copyBtn.addEventListener('click', () => {
+                const textToCopy = gdocTemplate.trim();
+                const textarea = document.createElement('textarea');
+                textarea.value = textToCopy;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+
+                copySuccess.classList.remove('hidden');
+                setTimeout(() => {
+                    copySuccess.classList.add('hidden');
+                }, 2000);
+            });
+
+
             // Populate Rules
             const rulesContainer = document.getElementById('rules-container');
             rulesData.forEach((rule, index) => {
@@ -332,20 +445,6 @@
                         arrow.style.transform = 'rotate(180deg)';
                     }
                 }
-            });
-
-             // Populate Essentials
-            const essentialsContainer = document.getElementById('essentials-container');
-            essentialsData.forEach(item => {
-                essentialsContainer.innerHTML += `
-                <div class="bg-white p-8 rounded-lg shadow-lg flex flex-col md:flex-row items-center gap-8">
-                    <div class="text-5xl">${item.icon}</div>
-                    <div>
-                        <h3 class="text-2xl font-bold text-[#C06C56] mb-2">${item.title}</h3>
-                        <p class="text-gray-600 leading-relaxed">${item.content}</p>
-                    </div>
-                </div>
-                `;
             });
 
             // Populate Shopping
@@ -380,7 +479,6 @@
                             <p class="text-sm font-semibold text-[#C06C56]">${item.category}</p>
                             <h3 class="text-xl font-bold text-gray-800 mt-1 mb-4">${item.item}</h3>
                             <div class="space-y-4" id="options-${index}">
-                                <!-- Options will be dynamically added here -->
                             </div>
                         </div>
                         <div class="bg-gray-50 px-6 py-4 flex justify-around">
@@ -415,7 +513,6 @@
                     const itemIndex = parseInt(e.target.dataset.index);
                     const optionType = e.target.dataset.option;
 
-                    // Update button styles
                     e.target.parentElement.querySelectorAll('.option-btn').forEach(btn => {
                         btn.classList.remove('bg-gray-200');
                         btn.classList.add('bg-white');
@@ -429,7 +526,6 @@
 
             renderShoppingList();
             
-            // Populate Checklist
             const checklistContainer = document.getElementById('checklist-container');
             checklistData.forEach((item, index) => {
                 const checkEl = document.createElement('div');
@@ -441,7 +537,6 @@
                 checklistContainer.appendChild(checkEl);
             });
 
-            // Mobile menu toggle
             const menuBtn = document.getElementById('menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
             menuBtn.addEventListener('click', () => {
@@ -451,7 +546,6 @@
                 mobileMenu.classList.add('hidden');
             });
 
-            // Chart.js implementation
             const ctx = document.getElementById('topperChart').getContext('2d');
             const topperChart = new Chart(ctx, {
                 type: 'bar',
@@ -461,9 +555,9 @@
                         label: 'Value Score',
                         data: [75, 85, 95],
                         backgroundColor: [
-                            'rgba(217, 163, 150, 0.6)', // Lighter Rust
-                            'rgba(192, 108, 86, 0.6)', // Accent Rust
-                            'rgba(148, 82, 64, 0.6)'  // Darker Rust
+                            'rgba(217, 163, 150, 0.6)',
+                            'rgba(192, 108, 86, 0.6)',
+                            'rgba(148, 82, 64, 0.6)'
                         ],
                         borderColor: [
                             'rgba(217, 163, 150, 1)',
@@ -478,42 +572,16 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: {
-                                font: {
-                                    family: "'Inter', sans-serif"
-                                }
-                            }
-                        },
-                        y: {
-                            ticks: {
-                                font: {
-                                    family: "'Inter', sans-serif",
-                                    size: 14
-                                }
-                            }
-                        }
+                        x: { beginAtZero: true, max: 100, ticks: { font: { family: "'Inter', sans-serif" } } },
+                        y: { ticks: { font: { family: "'Inter', sans-serif", size: 14 } } }
                     },
                     plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            enabled: true,
-                             titleFont: {
-                                family: "'Lora', serif"
-                            },
-                            bodyFont: {
-                                family: "'Inter', sans-serif"
-                            }
-                        }
+                        legend: { display: false },
+                        tooltip: { enabled: true, titleFont: { family: "'Lora', serif" }, bodyFont: { family: "'Inter', sans-serif" } }
                     }
                 }
             });
 
-            // Nav link active state on scroll
             const sections = document.querySelectorAll('section');
             const navLinks = document.querySelectorAll('.nav-link');
 
@@ -538,3 +606,4 @@
     </script>
 </body>
 </html>
+
