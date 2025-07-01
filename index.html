@@ -19,7 +19,7 @@
             background-color: #FDFBF8; /* Warm Off-White */
             color: #4A4A4A; /* Dark Gray */
         }
-        h1, h2, h3 {
+        h1, h2, h3, h4 {
             font-family: 'Lora', serif;
         }
         .chart-container {
@@ -51,16 +51,12 @@
             color: #9A9A9A;
             text-decoration: line-through;
         }
-        .gdoc-template {
-            background-color: #f3f4f6;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            font-family: monospace;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            max-height: 500px;
-            overflow-y: auto;
+        .planning-hub-card ul {
+            list-style-position: inside;
+        }
+        .planning-hub-card li {
+            padding-left: 0.5rem;
+            margin-bottom: 0.25rem;
         }
     </style>
 </head>
@@ -148,10 +144,13 @@
         <!-- Roommate Planning Hub Section -->
         <section id="planning-hub" class="mb-20 pt-16 -mt-16">
             <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">Roommate Planning Hub</h2>
-            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-8">Hey Autumn & Jess! Planning your shared spaces is the first step to a great year. Use this template to coordinate who's bringing what. Just copy the text below and paste it into a new Google Doc to start collaborating!</p>
-            <div class="gdoc-template" id="gdoc-template-content">
+            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-8">Hey Autumn & Jess! Planning your shared spaces is the first step to a great year. Use this template to coordinate who's bringing what. This section looks great on the site, and the "Copy Plan" button provides a simplified version perfect for pasting into a Google Doc!</p>
+            
+            <div id="planning-hub-visual" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Visual planning hub will be injected by JS -->
             </div>
-            <button id="copy-btn" class="mt-4 mx-auto block bg-[#C06C56] text-white font-bold py-2 px-6 rounded-lg hover:bg-opacity-90 transition-colors">Copy Plan to Clipboard</button>
+
+            <button id="copy-btn" class="mt-8 mx-auto block bg-[#C06C56] text-white font-bold py-2 px-6 rounded-lg hover:bg-opacity-90 transition-colors">Copy Google Doc Plan</button>
             <div id="copy-success" class="text-center mt-2 text-green-600 font-medium hidden">Copied to clipboard!</div>
         </section>
 
@@ -341,147 +340,186 @@
 
             const gdocTemplate = `
 Our WCU Dorm Room Plan! - Autumn & Jess
+=====================================
+
 Welcome, roomie! Use this doc to plan our amazing Allegheny Hall suite. Let's figure out who is bringing what for the shared spaces and keep track of our own stuff.
 
-====================================================
+---
 SHARED SPACES & APPLIANCES
-====================================================
-Let's decide on these together to avoid duplicates!
+---
+(Decide on these together to avoid duplicates!)
 
-** Area Rug
-Who's Bringing It: 
-Notes/Link: 
+- Area Rug:
+  - Who's Bringing It: 
+  - Notes/Link: 
 
-** Futon or Small Couch
-Who's Bringing It: 
-Notes/Link: 
+- Futon or Small Couch:
+  - Who's Bringing It: 
+  - Notes/Link: 
 
-** Coffee Table
-Who's Bringing It: 
-Notes/Link: 
+- Coffee Table:
+  - Who's Bringing It: 
+  - Notes/Link: 
 
-** TV / Media Stand
-Who's Bringing It: 
-Notes/Link: 
+- TV / Media Stand:
+  - Who's Bringing It: 
+  - Notes/Link: 
 
-** Mini-Fridge (Max 3.6 cu. ft.)
-Who's Bringing It: 
-Notes/Link: 
+- Mini-Fridge (Max 3.6 cu. ft.):
+  - Who's Bringing It: 
+  - Notes/Link: 
 
-** Microwave (Max 0.7 cu. ft.)
-Who's Bringing It: 
-Notes/Link: 
+- Microwave (Max 0.7 cu. ft.):
+  - Who's Bringing It: 
+  - Notes/Link: 
 
-** Coffee Maker
-Who's Bringing It: 
-Notes/Link: Search for "Keurig K-Mini" -> https://www.google.com/search?q=Keurig+K-Mini
+- Coffee Maker:
+  - Who's Bringing It: 
+  - Notes/Link: Search for "Keurig K-Mini" -> https://www.google.com/search?q=Keurig+K-Mini
 
-** Stick Vacuum
-Who's Bringing It: 
-Notes/Link: Search for "Bissell Featherweight Stick Vacuum" -> https://www.google.com/search?q=Bissell+Featherweight+Stick+Vacuum
+- Stick Vacuum:
+  - Who's Bringing It: 
+  - Notes/Link: Search for "Bissell Featherweight Stick Vacuum" -> https://www.google.com/search?q=Bissell+Featherweight+Stick+Vacuum
 
-====================================================
+---
 SHARED BATHROOM ITEMS
-====================================================
-We'll share one bathroom. Let's split these.
+---
+(We'll share one bathroom. Let's split these.)
 
-** Shower Curtain & Liner
-Who's Bringing It: 
-Notes/Link: 
+- Shower Curtain & Liner:
+  - Who's Bringing It: 
 
-** Bath Mat
-Who's Bringing It: 
-Notes/Link: 
+- Bath Mat:
+  - Who's Bringing It: 
 
-** Bathroom Trash Can
-Who's Bringing It: 
-Notes/Link: 
+- Bathroom Trash Can:
+  - Who's Bringing It: 
 
-** Toilet Brush & Cleaning Supplies
-Who's Bringing It: 
-Notes/Link: We can buy these together when we get there.
+- Toilet Brush & Cleaning Supplies:
+  - Who's Bringing It: (We can buy these together when we get there)
 
-====================================================
+=====================================
 AUTUMN'S PERSONAL CHECKLIST
-====================================================
+=====================================
 
---- BEDDING & COMFORT ---
-[ ] Twin XL Mattress Topper (Search: https://www.google.com/search?q=ViscoSoft+Select+High+Density+Topper)
-[ ] Twin XL Mattress Protector (Search: https://www.google.com/search?q=SafeRest+Waterproof+Mattress+Protector)
-[ ] Sleeping Pillows (2) (Search: https://www.google.com/search?q=Beckham+Hotel+Collection+Pillows)
-[ ] Twin XL Sheet Sets (2) (Search: https://www.google.com/search?q=Mellanni+Microfiber+Sheet+Set+Twin+XL)
+**BEDDING & COMFORT**
+[ ] Twin XL Mattress Topper
+[ ] Twin XL Mattress Protector
+[ ] Sleeping Pillows (2)
+[ ] Twin XL Sheet Sets (2)
 [ ] Twin XL Comforter
 [ ] Headboard
 
---- STORAGE, DECOR & ORGANIZATION ---
-[ ] Under-Bed Storage Bins (Search: https://www.google.com/search?q=IRIS+USA+Weathertight+Storage+Box)
-[ ] Nightstand (Search: https://www.google.com/search?q=Furinno+Just+3-Tier+End+Table)
-[ ] Velvet Hangers (Search: https://www.google.com/search?q=Amazon+Basics+Slim+Velvet+Hangers)
+**STORAGE, DECOR & ORGANIZATION**
+[ ] Under-Bed Storage Bins
+[ ] Nightstand
+[ ] Velvet Hangers
 [ ] Hanging Closet Organizer
 [ ] Over-the-Door Organizer
 [ ] Desk Organizer
-[ ] Fairy Lights (Search: https://www.google.com/search?q=Twinkle+Star+100+LED+Fairy+Lights)
-[ ] Wall Tapestry (Search: https://www.google.com/search?q=Society6+Wall+Tapestry)
-[ ] Photo Display (Search: https://www.google.com/search?q=Umbra+Hangit+Photo+Display)
-[ ] Plants (Search: https://www.google.com/search?q=IKEA+FEJKA+Artificial+Plants)
-[ ] Throw Blanket (Search: https://www.google.com/search?q=Bedsure+Fleece+Throw+Blanket)
-[ ] Decorative Pillows (Search: https://www.google.com/search?q=MIULEE+Corduroy+Throw+Pillow+Covers)
+[ ] Fairy Lights
+[ ] Wall Tapestry
+[ ] Photo Display
+[ ] Plants
+[ ] Throw Blanket
+[ ] Decorative Pillows
 
---- BATHROOM & PERSONAL ---
+**BATHROOM & PERSONAL**
 [ ] Mesh Shower Caddy
 [ ] Bath Towels (2 sets)
-[ ] Hand Towels & Washcloths
 [ ] Full-Length Mirror
 
---- TECH & STUDY ---
+**TECH & STUDY**
 [ ] Laptop & Charger
 [ ] Phone & Charger
-[ ] Surge Protector (Search: https://www.google.com/search?q=Anker+Power+Strip+Surge+Protector)
-[ ] LED Desk Lamp (Search: https://www.google.com/search?q=Lepro+LED+Desk+Lamp+with+USB)
+[ ] Surge Protector
+[ ] LED Desk Lamp
 [ ] Backpack
 [ ] Fan
 
-====================================================
+=====================================
 JESS'S PERSONAL CHECKLIST
-====================================================
+=====================================
 
---- BEDDING & COMFORT ---
-[ ] Twin XL Mattress Topper (Search: https://www.google.com/search?q=ViscoSoft+Select+High+Density+Topper)
-[ ] Twin XL Mattress Protector (Search: https://www.google.com/search?q=SafeRest+Waterproof+Mattress+Protector)
-[ ] Sleeping Pillows (2) (Search: https://www.google.com/search?q=Beckham+Hotel+Collection+Pillows)
-[ ] Twin XL Sheet Sets (2) (Search: https://www.google.com/search?q=Mellanni+Microfiber+Sheet+Set+Twin+XL)
+**BEDDING & COMFORT**
+[ ] Twin XL Mattress Topper
+[ ] Twin XL Mattress Protector
+[ ] Sleeping Pillows (2)
+[ ] Twin XL Sheet Sets (2)
 [ ] Twin XL Comforter
 [ ] Headboard
 
---- STORAGE, DECOR & ORGANIZATION ---
-[ ] Under-Bed Storage Bins (Search: https://www.google.com/search?q=IRIS+USA+Weathertight+Storage+Box)
-[ ] Nightstand (Search: https://www.google.com/search?q=Furinno+Just+3-Tier+End+Table)
-[ ] Velvet Hangers (Search: https://www.google.com/search?q=Amazon+Basics+Slim+Velvet+Hangers)
+**STORAGE, DECOR & ORGANIZATION**
+[ ] Under-Bed Storage Bins
+[ ] Nightstand
+[ ] Velvet Hangers
 [ ] Hanging Closet Organizer
 [ ] Over-the-Door Organizer
 [ ] Desk Organizer
-[ ] Fairy Lights (Search: https://www.google.com/search?q=Twinkle+Star+100+LED+Fairy+Lights)
-[ ] Wall Tapestry (Search: https://www.google.com/search?q=Society6+Wall+Tapestry)
-[ ] Photo Display (Search: https://www.google.com/search?q=Umbra+Hangit+Photo+Display)
-[ ] Plants (Search: https://www.google.com/search?q=IKEA+FEJKA+Artificial+Plants)
-[ ] Throw Blanket (Search: https://www.google.com/search?q=Bedsure+Fleece+Throw+Blanket)
-[ ] Decorative Pillows (Search: https://www.google.com/search?q=MIULEE+Corduroy+Throw+Pillow+Covers)
+[ ] Fairy Lights
+[ ] Wall Tapestry
+[ ] Photo Display
+[ ] Plants
+[ ] Throw Blanket
+[ ] Decorative Pillows
 
---- BATHROOM & PERSONAL ---
+**BATHROOM & PERSONAL**
 [ ] Mesh Shower Caddy
 [ ] Bath Towels (2 sets)
-[ ] Hand Towels & Washcloths
 [ ] Full-Length Mirror
 
---- TECH & STUDY ---
+**TECH & STUDY**
 [ ] Laptop & Charger
 [ ] Phone & Charger
-[ ] Surge Protector (Search: https://www.google.com/search?q=Anker+Power+Strip+Surge+Protector)
-[ ] LED Desk Lamp (Search: https://www.google.com/search?q=Lepro+LED+Desk+Lamp+with+USB)
+[ ] Surge Protector
+[ ] LED Desk Lamp
 [ ] Backpack
 [ ] Fan
 `;
-            document.getElementById('gdoc-template-content').textContent = gdocTemplate.trim();
+            
+            const planningHubVisual = document.getElementById('planning-hub-visual');
+            planningHubVisual.innerHTML = `
+                <div class="planning-hub-card bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-bold mb-4 text-[#C06C56]">Shared Items</h3>
+                    <h4 class="font-bold mt-4 mb-2">Living Room / Kitchenette</h4>
+                    <ul class="list-disc text-gray-600 space-y-2">
+                        <li>Area Rug</li>
+                        <li>Futon or Small Couch</li>
+                        <li>Coffee Table</li>
+                        <li>TV / Media Stand</li>
+                        <li>Mini-Fridge</li>
+                        <li>Microwave</li>
+                        <li>Coffee Maker</li>
+                        <li>Stick Vacuum</li>
+                    </ul>
+                    <h4 class="font-bold mt-6 mb-2">Bathroom</h4>
+                    <ul class="list-disc text-gray-600 space-y-2">
+                        <li>Shower Curtain & Liner</li>
+                        <li>Bath Mat</li>
+                        <li>Trash Can</li>
+                        <li>Cleaning Supplies</li>
+                    </ul>
+                </div>
+                <div class="planning-hub-card bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-bold mb-4 text-[#C06C56]">Autumn's List</h3>
+                    <h4 class="font-bold mt-4 mb-2">Bedding & Comfort</h4>
+                    <ul class="list-disc text-gray-600"><li>Mattress Topper</li><li>Protector</li><li>Pillows</li><li>Sheets</li><li>Comforter</li></ul>
+                    <h4 class="font-bold mt-6 mb-2">Storage & Decor</h4>
+                    <ul class="list-disc text-gray-600"><li>Nightstand</li><li>Hangers</li><li>Organizers</li><li>Fairy Lights</li><li>Tapestry</li><li>Photo Display</li><li>Plants</li><li>Throw Blanket</li><li>Pillows</li></ul>
+                    <h4 class="font-bold mt-6 mb-2">Tech & Other</h4>
+                    <ul class="list-disc text-gray-600"><li>Surge Protector</li><li>Desk Lamp</li><li>Fan</li><li>Mirror</li></ul>
+                </div>
+                <div class="planning-hub-card bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-bold mb-4 text-[#C06C56]">Jess's List</h3>
+                    <h4 class="font-bold mt-4 mb-2">Bedding & Comfort</h4>
+                    <ul class="list-disc text-gray-600"><li>Mattress Topper</li><li>Protector</li><li>Pillows</li><li>Sheets</li><li>Comforter</li></ul>
+                    <h4 class="font-bold mt-6 mb-2">Storage & Decor</h4>
+                    <ul class="list-disc text-gray-600"><li>Nightstand</li><li>Hangers</li><li>Organizers</li><li>Fairy Lights</li><li>Tapestry</li><li>Photo Display</li><li>Plants</li><li>Throw Blanket</li><li>Pillows</li></ul>
+                    <h4 class="font-bold mt-6 mb-2">Tech & Other</h4>
+                    <ul class="list-disc text-gray-600"><li>Surge Protector</li><li>Desk Lamp</li><li>Fan</li><li>Mirror</li></ul>
+                </div>
+            `;
+
 
             const copyBtn = document.getElementById('copy-btn');
             const copySuccess = document.getElementById('copy-success');
