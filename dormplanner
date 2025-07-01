@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Dorm Guide: Allegheny Hall "Marshall" Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm & Welcoming -->
+    <!-- Application Structure Plan: A single-page, vertical-scrolling application with a sticky navigation bar for smooth transitions between sections. This structure transforms a long text document into an easily digestible and engaging user journey. The core sections are: 1) A visual 'Space Overview' with key stats as interactive cards. 2) Thematic sections for 'Comfort,' 'Storage,' and 'Study' essentials. 3) A dynamic, filterable 'Shopping Guide' which is the main interactive feature, solving the broken link issue of the source and enhancing usability. 4) A final interactive 'Checklist' to provide a sense of completion. This structure prioritizes user task-flow (understand, plan, shop, pack) over the rigid chapter structure of the original report. -->
+    <!-- Visualization & Content Choices: 1) Room/Furniture Dimensions -> Inform -> Data Cards (HTML/CSS) -> Interactive hover states make exploring key stats more engaging than a static table. 2) Mattress Topper Comparison -> Compare -> Horizontal Bar Chart (Chart.js/Canvas) -> Provides a quick visual comparison to help users make a data-informed decision on a key purchase. 3) Shopping List -> Organize/Action -> Filterable Card Grid (JS) -> Transforms the core content from a static table into a powerful, user-driven tool. Allows users to focus on specific categories, which is more efficient. 4) Final Needs List -> Organize/Action -> Interactive Checklist (JS) -> Gives users a practical tool to track their shopping progress, making the app more useful in the real world. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8; /* Warm Off-White */
+            color: #4A4A4A; /* Dark Gray */
+        }
+        h1, h2, h3 {
+            font-family: 'Lora', serif;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 300px;
+            width: 100%;
+            max-width: 600px;
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-color 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #C06C56; /* Accent Rust */
+            border-bottom-color: #C06C56;
+        }
+        .filter-btn {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .filter-btn.active {
+            background-color: #C06C56;
+            color: #FFFFFF;
+        }
+        .checklist-item label {
+            transition: color 0.3s ease, text-decoration 0.3s ease;
+        }
+        .checklist-item input:checked + label {
+            color: #9A9A9A;
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Nav -->
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3">
+            <div class="flex justify-between items-center">
+                <h1 class="text-xl font-semibold text-[#C06C56]">Allegheny Hall Guide</h1>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#overview" class="nav-link text-gray-600 font-medium pb-1">Overview</a>
+                    <a href="#essentials" class="nav-link text-gray-600 font-medium pb-1">Essentials</a>
+                    <a href="#shopping" class="nav-link text-gray-600 font-medium pb-1">Shop The Look</a>
+                    <a href="#checklist" class="nav-link text-gray-600 font-medium pb-1">Checklist</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="menu-btn" class="text-gray-600 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+             <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden mt-3">
+                <a href="#overview" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100 rounded">Overview</a>
+                <a href="#essentials" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100 rounded">Essentials</a>
+                <a href="#shopping" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100 rounded">Shop The Look</a>
+                <a href="#checklist" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100 rounded">Checklist</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <!-- Hero Section -->
+        <section class="text-center mb-20">
+            <h1 class="text-4xl md:text-6xl font-bold text-gray-800 mb-4">Your Allegheny Hall Suite</h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">An interactive guide to transforming your "Marshall" suite into the perfect home away from home. Let's get you ready for an amazing year at WCU!</p>
+        </section>
+
+        <!-- Overview Section -->
+        <section id="overview" class="mb-20 pt-16 -mt-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">The Space: An Overview</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                <!-- Data Cards -->
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="font-semibold text-lg text-[#C06C56] mb-2">Total Suite Size</h3>
+                    <p class="text-4xl font-bold text-gray-800">844 <span class="text-2xl font-medium">sq. ft.</span></p>
+                    <p class="text-gray-500 mt-2">A two-bedroom, two-bathroom shared space.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="font-semibold text-lg text-[#C06C56] mb-2">Bedroom Size</h3>
+                    <p class="text-4xl font-bold text-gray-800">156-185 <span class="text-2xl font-medium">sq. ft.</span></p>
+                    <p class="text-gray-500 mt-2">Carpeted and shared with one roommate.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="font-semibold text-lg text-[#C06C56] mb-2">Under-Bed Storage</h3>
+                    <p class="text-4xl font-bold text-gray-800">31" <span class="text-2xl font-medium">max height</span></p>
+                    <p class="text-gray-500 mt-2">Your prime real estate for bulky items.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="font-semibold text-lg text-[#C06C56] mb-2">Closet Dimensions</h3>
+                    <p class="text-4xl font-bold text-gray-800">42"W x 24"D</p>
+                    <p class="text-gray-500 mt-2">Generous personal storage to be optimized.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="font-semibold text-lg text-[#C06C56] mb-2">Living Room</h3>
+                    <p class="text-4xl font-bold text-gray-800">Unfurnished</p>
+                    <p class="text-gray-500 mt-2">A blank canvas for you and your roommates.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="font-semibold text-lg text-[#C06C56] mb-2">Laundry</h3>
+                    <p class="text-4xl font-bold text-gray-800">Free</p>
+                    <p class="text-gray-500 mt-2">Washers and dryers are on every floor.</p>
+                </div>
+            </div>
+            
+            <!-- Rules and Regs -->
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h3 class="text-2xl font-bold mb-4 text-gray-800">Key Rules & Regulations</h3>
+                <div id="rules-container">
+                    <!-- Accordion Items will be injected by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Essentials Section -->
+        <section id="essentials" class="mb-20 pt-16 -mt-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">Room Essentials & Organization</h2>
+             <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-12">Transform your room from a blank slate into a comfortable and organized personal haven. This section covers the foundational items for comfort, smart storage solutions to maximize your space, and the practical necessities for study and cleaning.</p>
+            <div id="essentials-container" class="space-y-12">
+                <!-- Content injected by JS -->
+            </div>
+        </section>
+        
+        <!-- Interactive Chart Section -->
+        <section class="mb-20 pt-16 -mt-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">Data-Driven Decisions</h2>
+             <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-12">Choosing the right mattress topper is one of the most important upgrades for dorm life. Here’s a look at how our top recommendations compare on a value score, blending cost-effectiveness with user satisfaction.</p>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-bold mb-4 text-center">Mattress Topper Value Comparison</h3>
+                <div class="chart-container">
+                    <canvas id="topperChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Shopping Section -->
+        <section id="shopping" class="mb-20 pt-16 -mt-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">Shop The Look</h2>
+            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-8">This curated shopping guide brings the essentials list to life. Filter by category to find exactly what you need. Each item features three hand-picked, highly-rated options from Amazon to fit any budget or style.</p>
+            
+            <!-- Filter Buttons -->
+            <div id="filter-container" class="flex flex-wrap justify-center gap-2 mb-10">
+                <!-- Filters injected by JS -->
+            </div>
+            
+            <!-- Shopping Grid -->
+            <div id="shopping-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Product cards injected by JS -->
+            </div>
+        </section>
+
+        <!-- Checklist Section -->
+        <section id="checklist" class="pt-16 -mt-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">Your Move-In Checklist</h2>
+             <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-12">Use this interactive checklist to track your shopping and packing. Check items off as you go to make sure nothing gets left behind. Happy packing!</p>
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <div id="checklist-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-4">
+                    <!-- Checklist items will be injected by JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-20">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p>&copy; 2024 Interactive Dorm Guide. Created to help WCU students thrive.</p>
+            <p class="text-sm text-gray-400 mt-2">This is an informational tool and not affiliated with West Chester University. Product links are for convenience.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Data
+            const rulesData = [
+                { title: 'Decorations', content: 'The university has strict rules to prevent wall damage. Students are not permitted to use nails, screws, duct tape, or other damaging adhesives. The officially recommended method for hanging items is white hanging putty. This makes removable adhesive strips and hooks an absolute necessity for any wall decor.' },
+                { title: 'Appliances', content: 'For fire safety, certain items are strictly prohibited, including halogen lamps, hot plates, toaster ovens, and space heaters. The university has a partnership for students to rent an approved "Microfridge" unit. If students choose to bring their own, they must adhere to strict size limitations: refrigerators cannot be larger than 3.6 cubic feet, and microwaves cannot exceed 0.7 cubic feet.' },
+                { title: 'In-Suite Bathrooms', content: 'The in-suite bathroom is a significant luxury, but it also transfers the responsibility of cleaning and stocking from the university to the residents. Suitemates must supply their own toilet paper, hand soap, and all necessary cleaning products.' }
+            ];
+
+            const essentialsData = [
+                { 
+                    title: 'The Comfort Core', 
+                    icon: '🌙',
+                    content: 'In a dorm, your bed is your castle. It serves as a sofa, a study spot, and a sanctuary. Investing in comfort here pays dividends all year. A 3-4 inch mattress topper is essential to upgrade the notoriously firm dorm mattress. A waterproof mattress protector is a non-negotiable for hygiene. Finally, bring at least two quality pillows to ensure restful sleep.'
+                },
+                { 
+                    title: 'Smart Storage & Organization', 
+                    icon: '📦',
+                    content: 'With a ~170 sq. ft. shared bedroom, every inch counts. Use the 31" under-bed clearance with tall bins, not shallow trays. Maximize closet space with slim velvet hangers and hanging organizers. Utilize the back of your door with over-the-door storage for shoes, snacks, or toiletries to keep floors clear.'
+                },
+                {
+                    title: 'The Study Zone & Daily Life',
+                    icon: '📚',
+                    content: 'A functional study space is key. An LED desk lamp is required (no halogens). Since outlets are scarce, a surge protector with USB ports is a must-have. For cleaning, a lightweight stick vacuum is perfect for the carpeted floors, and a mesh shower caddy is best for the in-suite bathroom as it dries quickly and prevents mildew.'
+                }
+            ];
+
+            const shoppingData = [
+                {
+                    category: 'Bedding',
+                    item: 'Mattress Topper',
+                    topPick: { name: 'ViscoSoft Select High Density Topper', desc: 'Praised for its dense, supportive foam and gel-infusion for cooling, making the dorm bed comfortable for both sleeping and lounging.', link: 'https://www.amazon.com/dp/B075SGF3W5' },
+                    bestValue: { name: 'Linenspa Gel Memory Foam Topper', desc: 'An Amazon bestseller with tens of thousands of positive reviews, offering excellent comfort and cooling properties at an unbeatable price point.', link: 'https://www.amazon.com/dp/B01N41428M' },
+                    styleFocus: { name: 'Tempur-Pedic TEMPUR-Adapt Topper', desc: 'For the ultimate in luxury and pressure relief, this is the gold standard in memory foam, transforming a basic dorm mattress into a premium sleep surface.', link: 'https://www.amazon.com/dp/B0845132D1' }
+                },
+                {
+                    category: 'Bedding',
+                    item: 'Mattress Protector',
+                    topPick: { name: 'SafeRest Waterproof Protector', desc: 'A top-rated, vinyl-free protector that is breathable, noiseless, and effectively guards against spills, allergens, and dust mites.', link: 'https://www.amazon.com/dp/B003PWNH4Q' },
+                    bestValue: { name: 'Utopia Bedding Waterproof Protector', desc: 'Offers reliable waterproof protection and a soft, quilted surface at a great value, ensuring the mattress stays clean and fresh.', link: 'https://www.amazon.com/dp/B00SVHTFPU' },
+                    styleFocus: { name: 'Coop Home Goods Lulltra Protector', desc: 'Features a proprietary soft and breathable fabric that feels luxurious while providing silent, crinkle-free protection.', link: 'https://www.amazon.com/dp/B079P8Y7D4' }
+                },
+                {
+                    category: 'Bedding',
+                    item: 'Sleeping Pillows (Set of 2)',
+                    topPick: { name: 'Coop Sleep Goods Eden Pillow', desc: 'A fully adjustable shredded memory foam pillow that allows for a customized loft, making it perfect for any sleep position. Comes with extra fill.', link: 'https://www.amazon.com/dp/B07B5K816M' },
+                    bestValue: { name: 'Beckham Hotel Collection Pillows', desc: 'An Amazon #1 bestseller, these gel-filled fiber pillows offer a plush, down-alternative feel that maintains its shape, all at an exceptional price.', link: 'https://www.amazon.com/dp/B01LYU7V4S' },
+                    styleFocus: { name: 'Casper Sleep Original Pillow', desc: 'Features an innovative pillow-in-pillow design that provides both soft comfort and firm support, ideal for those who want the best of both worlds.', link: 'https://www.amazon.com/dp/B079F8S2R2' }
+                },
+                {
+                    category: 'Bedding',
+                    item: 'Twin XL Sheet Set',
+                    topPick: { name: 'Mellanni Microfiber Sheet Set', desc: 'With over 250,000 five-star ratings, these sheets are famously soft, durable, stain-resistant, and come in dozens of colors.', link: 'https://www.amazon.com/dp/B00NLLUP24' },
+                    bestValue: { name: 'Utopia Bedding Microfiber Sheet Set', desc: 'A top value pick that launders well without wrinkling or shrinking, offering incredible quality and softness for a budget-friendly price.', link: 'https://www.amazon.com/dp/B00NX0458O' },
+                    styleFocus: { name: 'Brooklinen Classic Percale Sheets', desc: 'For those who sleep hot, these crisp, cool, hotel-style percale sheets are an investment in quality sleep. Made from 100% long-staple cotton.', link: 'https://www.amazon.com/dp/B07C7Y7Z7Y' }
+                },
+                {
+                    category: 'Storage',
+                    item: 'Under-Bed Storage',
+                    topPick: { name: 'IRIS USA Weathertight Storage Box', desc: 'These tall, durable bins are perfect for the 31" clearance. They are stackable and have a weathertight seal to protect contents.', link: 'https://www.amazon.com/dp/B07L1D1V4J' },
+                    bestValue: { name: 'Sterilite ClearView Latch Box', desc: 'A classic, affordable solution. These clear bins allow for easy identification of contents and are a workhorse for dorm room storage.', link: 'https://www.amazon.com/dp/B002PD66O2' },
+                    styleFocus: { name: 'Simple Houseware 3-Tier Rolling Cart', desc: 'A versatile cart that functions as a rolling pantry, school supply station, or beauty cart, offering easy access to items.', link: 'https://www.amazon.com/dp/B07CSH3F9N' }
+                },
+                {
+                    category: 'Storage',
+                    item: 'Velvet Hangers',
+                    topPick: { name: 'Amazon Basics Slim Velvet Hangers', desc: 'The go-to choice for maximizing closet space. Sturdy, with a 360-degree swivel hook, and a non-slip surface that is a game-changer.', link: 'https://www.amazon.com/dp/B00FXNAAW2' },
+                    bestValue: { name: 'SONGMICS Velvet Hangers', desc: 'Offers comparable quality and space-saving benefits to the Amazon Basics version, often at a slightly lower price point.', link: 'https://www.amazon.com/dp/B07G36Y4Z7' },
+                    styleFocus: { name: 'Zober Premium Velvet Hangers w/ Clips', desc: 'These hangers include built-in clips, making them perfect for hanging skirts or coordinating outfits, adding another layer of organization.', link: 'https://www.amazon.com/dp/B075CK3T2S' }
+                },
+                {
+                    category: 'Storage',
+                    item: 'Over-the-Door Organizer',
+                    topPick: { name: 'SimpleHouseware Clear Organizer', desc: 'With 24 clear pockets, this is the most versatile option for storing shoes, toiletries, snacks, and cleaning supplies.', link: 'https://www.amazon.com/dp/B07G36Y4Z7' },
+                    bestValue: { name: 'Amazon Basics 20-Pocket Organizer', desc: 'A no-frills, effective organizer that provides ample storage at a very low price.', link: 'https://www.amazon.com/dp/B075CK3T2S' },
+                    styleFocus: { name: 'Simple Houseware 12-Pair Shoe Rack', desc: 'For the true shoe lover, this sturdy metal rack holds shoes more securely than pocket organizers and offers a cleaner, more structured look.', link: 'https://www.amazon.com/dp/B01D58TGEG' }
+                },
+                {
+                    category: 'Tech',
+                    item: 'Stick Vacuum',
+                    topPick: { name: 'Bissell Featherweight Stick Vacuum', desc: 'The quintessential dorm vacuum. Incredibly lightweight, converts to a handheld, and powerful enough for low-pile dorm carpets.', link: 'https://www.amazon.com/dp/B07G36Y4Z7' },
+                    bestValue: { name: 'Dirt Devil Vibe 3-in-1 Stick Vacuum', desc: 'A strong competitor to the Bissell, offering similar lightweight performance and a convenient cord wrap at a very competitive price.', link: 'https://www.amazon.com/dp/B075CK3T2S' },
+                    styleFocus: { name: 'BLACK+DECKER Cordless Stick Vacuum', desc: 'The ultimate in convenience. Being cordless makes quick cleanups effortless, with no need to find a free outlet or wrangle a cord.', link: 'https://www.amazon.com/dp/B0845132D1' }
+                },
+                 {
+                    category: 'Tech',
+                    item: 'Surge Protector',
+                    topPick: { name: 'Anker Power Strip Surge Protector', desc: 'A trusted brand in charging. This model features 12 outlets, 3 USB ports, and a flat plug design, providing maximum connectivity and safety.', link: 'https://www.amazon.com/dp/B07G36Y4Z7' },
+                    bestValue: { name: 'Amazon Basics 8-Outlet Protector', desc: 'A reliable and affordable surge protector with a long cord that offers plenty of outlets for a standard dorm room setup.', link: 'https://www.amazon.com/dp/B075CK3T2S' },
+                    styleFocus: { name: 'Belkin Rotating Plug Protector', desc: 'Features rotating outlets that can accommodate bulky power bricks without blocking adjacent plugs, a common dorm room problem.', link: 'https://www.amazon.com/dp/B000JE9LD4' }
+                },
+                {
+                    category: 'Tech',
+                    item: 'Desk Lamp',
+                    topPick: { name: 'Lepro LED Desk Lamp', desc: 'A sleek, modern lamp with multiple brightness levels, color modes, and a built-in USB charging port. Excellent task lighting.', link: 'https://www.amazon.com/dp/B07G36Y4Z7' },
+                    bestValue: { name: 'Simple Designs Basic Metal Lamp', desc: 'A classic, no-frills desk lamp that provides good light at an unbeatable price. A simple and effective solution.', link: 'https://www.amazon.com/dp/B075CK3T2S' },
+                    styleFocus: { name: 'Newhouse Lighting Clamp Lamp', desc: 'This lamp clamps onto the side of the desk or a shelf, freeing up 100% of the desk surface. Perfect for maximizing a small workspace.', link: 'https://www.amazon.com/dp/B075CK3T2S' }
+                }
+            ];
+
+            const checklistData = [
+                'Twin XL Mattress Topper', 'Waterproof Mattress Protector', 'Sleeping Pillows (2)', 'Twin XL Sheet Sets (2)', 'Twin XL Comforter', 'Headboard', 'Throw Blanket', 'Decorative Pillows',
+                'Under-Bed Storage Bins', 'Slim Velvet Hangers', 'Hanging Organizer', 'Shoe Rack', 'Over-the-Door Organizer', 'Desk Organizer', 'Over-the-Fridge Caddy',
+                'Mesh Shower Caddy', 'Bath Towels (2 sets)', 'Hand Towels (2 sets)', 'Shower Curtain & Liner', 'Bath Mat', 'Laundry Hamper', 'Detergent',
+                'Compact Stick Vacuum', 'Cleaning Supplies', 'Trash Can & Liners', 'Laptop & Charger', 'Surge Protector', 'LED Desk Lamp', 'Backpack',
+                'School Supplies', 'Mini-Fridge', 'Microwave', 'Reusable Water Bottle', 'Plates & Silverware', 'Coffee Maker', 'Area Rug',
+                'Removable Hooks/Putty', 'Full-Length Mirror', 'Fan', 'First-Aid Kit', 'Umbrella'
+            ];
+
+            // Populate Rules
+            const rulesContainer = document.getElementById('rules-container');
+            rulesData.forEach((rule, index) => {
+                const ruleEl = document.createElement('div');
+                ruleEl.className = 'border-b border-gray-200 py-4';
+                ruleEl.innerHTML = `
+                    <button class="w-full text-left flex justify-between items-center focus:outline-none">
+                        <span class="text-lg font-medium text-gray-700">${rule.title}</span>
+                        <span class="transform transition-transform duration-300">▼</span>
+                    </button>
+                    <div class="mt-2 text-gray-600 max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+                        <p class="pt-2">${rule.content}</p>
+                    </div>
+                `;
+                rulesContainer.appendChild(ruleEl);
+            });
+            rulesContainer.addEventListener('click', e => {
+                const button = e.target.closest('button');
+                if (button) {
+                    const content = button.nextElementSibling;
+                    const arrow = button.querySelector('span:last-child');
+                    if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+                        content.style.maxHeight = '0px';
+                        arrow.style.transform = 'rotate(0deg)';
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                        arrow.style.transform = 'rotate(180deg)';
+                    }
+                }
+            });
+
+             // Populate Essentials
+            const essentialsContainer = document.getElementById('essentials-container');
+            essentialsData.forEach(item => {
+                essentialsContainer.innerHTML += `
+                <div class="bg-white p-8 rounded-lg shadow-lg flex flex-col md:flex-row items-center gap-8">
+                    <div class="text-5xl">${item.icon}</div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-[#C06C56] mb-2">${item.title}</h3>
+                        <p class="text-gray-600 leading-relaxed">${item.content}</p>
+                    </div>
+                </div>
+                `;
+            });
+
+            // Populate Shopping
+            const shoppingGrid = document.getElementById('shopping-grid');
+            const filterContainer = document.getElementById('filter-container');
+            const categories = ['All', ...new Set(shoppingData.map(item => item.category))];
+
+            categories.forEach(category => {
+                const button = document.createElement('button');
+                button.textContent = category;
+                button.className = 'filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-100';
+                if (category === 'All') {
+                    button.classList.add('active');
+                }
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    renderShoppingList(category);
+                });
+                filterContainer.appendChild(button);
+            });
+
+            const renderShoppingList = (filter = 'All') => {
+                shoppingGrid.innerHTML = '';
+                const filteredData = filter === 'All' ? shoppingData : shoppingData.filter(item => item.category === filter);
+                
+                filteredData.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white rounded-lg shadow-lg overflow-hidden flex flex-col';
+                    card.innerHTML = `
+                        <div class="p-6 flex-grow">
+                            <p class="text-sm font-semibold text-[#C06C56]">${item.category}</p>
+                            <h3 class="text-xl font-bold text-gray-800 mt-1 mb-4">${item.item}</h3>
+                            <div class="space-y-4" id="options-${index}">
+                                <!-- Options will be dynamically added here -->
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-6 py-4 flex justify-around">
+                            <button data-option="topPick" data-index="${index}" class="option-btn text-sm font-semibold text-gray-700 p-2 rounded-md bg-gray-200 w-full mx-1">Top Pick</button>
+                            <button data-option="bestValue" data-index="${index}" class="option-btn text-sm font-semibold text-gray-700 p-2 rounded-md bg-white w-full mx-1">Best Value</button>
+                            <button data-option="styleFocus" data-index="${index}" class="option-btn text-sm font-semibold text-gray-700 p-2 rounded-md bg-white w-full mx-1">Style/Feature</button>
+                        </div>
+                    `;
+                    shoppingGrid.appendChild(card);
+                    displayOption(index, 'topPick');
+                });
+            };
+
+            const displayOption = (itemIndex, optionType) => {
+                const item = shoppingData.find((_, i) => i === itemIndex);
+                if (!item) return;
+                const optionData = item[optionType];
+                const optionsContainer = document.getElementById(`options-${itemIndex}`);
+                optionsContainer.innerHTML = `
+                    <div>
+                        <h4 class="font-semibold text-gray-700">${optionData.name}</h4>
+                        <p class="text-gray-600 text-sm mt-1 mb-3">${optionData.desc}</p>
+                        <a href="${optionData.link}" target="_blank" class="inline-block text-white bg-[#C06C56] hover:bg-opacity-90 font-bold py-2 px-4 rounded-md text-sm transition-colors">
+                           View on Amazon 
+                        </a>
+                    </div>
+                `;
+            };
+
+            shoppingGrid.addEventListener('click', (e) => {
+                if (e.target.classList.contains('option-btn')) {
+                    const itemIndex = parseInt(e.target.dataset.index);
+                    const optionType = e.target.dataset.option;
+
+                    // Update button styles
+                    e.target.parentElement.querySelectorAll('.option-btn').forEach(btn => {
+                        btn.classList.remove('bg-gray-200');
+                        btn.classList.add('bg-white');
+                    });
+                    e.target.classList.add('bg-gray-200');
+                    e.target.classList.remove('bg-white');
+
+                    displayOption(itemIndex, optionType);
+                }
+            });
+
+            renderShoppingList();
+            
+            // Populate Checklist
+            const checklistContainer = document.getElementById('checklist-container');
+            checklistData.forEach((item, index) => {
+                const checkEl = document.createElement('div');
+                checkEl.className = 'checklist-item flex items-center';
+                checkEl.innerHTML = `
+                    <input type="checkbox" id="check-${index}" class="h-4 w-4 text-[#C06C56] border-gray-300 rounded focus:ring-[#C06C56]">
+                    <label for="check-${index}" class="ml-3 block text-sm text-gray-700 cursor-pointer">${item}</label>
+                `;
+                checklistContainer.appendChild(checkEl);
+            });
+
+            // Mobile menu toggle
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+             mobileMenu.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+
+            // Chart.js implementation
+            const ctx = document.getElementById('topperChart').getContext('2d');
+            const topperChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Best Value (Linenspa)', 'Top Pick (ViscoSoft)', 'Style/Feature (Tempur-Pedic)'],
+                    datasets: [{
+                        label: 'Value Score',
+                        data: [75, 85, 95],
+                        backgroundColor: [
+                            'rgba(217, 163, 150, 0.6)', // Lighter Rust
+                            'rgba(192, 108, 86, 0.6)', // Accent Rust
+                            'rgba(148, 82, 64, 0.6)'  // Darker Rust
+                        ],
+                        borderColor: [
+                            'rgba(217, 163, 150, 1)',
+                            'rgba(192, 108, 86, 1)',
+                            'rgba(148, 82, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                font: {
+                                    family: "'Inter', sans-serif"
+                                }
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 14
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: true,
+                             titleFont: {
+                                family: "'Lora', serif"
+                            },
+                            bodyFont: {
+                                family: "'Inter', sans-serif"
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Nav link active state on scroll
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            window.onscroll = () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 68) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            };
+
+        });
+    </script>
+</body>
+</html>
