@@ -246,6 +246,13 @@
                 },
                 {
                     category: 'Storage',
+                    item: 'Nightstand',
+                    topPick: { name: 'Furinno Just 3-Tier End Table', desc: 'A simple, compact, and extremely affordable nightstand that is consistently a top seller for small spaces like dorm rooms.', link: 'https://www.google.com/search?q=Furinno+Just+3-Tier+End+Table' },
+                    bestValue: { name: 'SONGMICS Nightstand with Fabric Drawer', desc: 'Offers both a hard top surface and a soft fabric drawer for concealed storage, providing great functionality for the price.', link: 'https://www.google.com/search?q=SONGMICS+Nightstand+with+Fabric+Drawer' },
+                    styleFocus: { name: 'Bedside Shelf for Bunk Beds', desc: 'A clamp-on shelf that attaches directly to the bed frame. The ultimate space-saver, perfect for holding a phone, drink, and book.', link: 'https://www.google.com/search?q=Bedside+Shelf+for+Bunk+Beds' }
+                },
+                {
+                    category: 'Storage',
                     item: 'Velvet Hangers',
                     topPick: { name: 'Amazon Basics Slim Velvet Hangers', desc: 'The go-to choice for maximizing closet space. Sturdy, with a 360-degree swivel hook, and a non-slip surface that is a game-changer.', link: 'https://www.google.com/search?q=Amazon+Basics+Slim+Velvet+Hangers' },
                     bestValue: { name: 'SONGMICS Velvet Hangers', desc: 'Offers comparable quality and space-saving benefits to the Amazon Basics version, often at a slightly lower price point.', link: 'https://www.google.com/search?q=SONGMICS+Velvet+Hangers' },
@@ -257,6 +264,13 @@
                     topPick: { name: 'SimpleHouseware Clear Organizer', desc: 'With 24 clear pockets, this is the most versatile option for storing shoes, toiletries, snacks, and cleaning supplies.', link: 'https://www.google.com/search?q=SimpleHouseware+24-Pocket+Clear+Over+The+Door+Hanging+Shoe+Organizer' },
                     bestValue: { name: 'Amazon Basics 20-Pocket Organizer', desc: 'A no-frills, effective organizer that provides ample storage at a very low price.', link: 'https://www.google.com/search?q=Amazon+Basics+20-Pocket+Over-the-Door+Shoe+Organizer' },
                     styleFocus: { name: 'Simple Houseware 12-Pair Shoe Rack', desc: 'For the true shoe lover, this sturdy metal rack holds shoes more securely than pocket organizers and offers a cleaner, more structured look.', link: 'https://www.google.com/search?q=Simple+Houseware+Over+the+Door+12-Pair+Shoe+Rack' }
+                },
+                {
+                    category: 'Decor',
+                    item: 'Fairy Lights',
+                    topPick: { name: 'Twinkle Star 100 LED Fairy Lights', desc: 'A bestseller with a warm white glow, remote control, and multiple modes (twinkle, steady, etc.). Perfect for creating a cozy ambiance.', link: 'https://www.google.com/search?q=Twinkle+Star+100+LED+Fairy+Lights+Warm+White' },
+                    bestValue: { name: 'Govee LED Strip Lights', desc: 'Offers more customization with RGB colors, app control, and music sync modes, all at a very competitive price point for smart lighting.', link: 'https://www.google.com/search?q=Govee+LED+Strip+Lights' },
+                    styleFocus: { name: 'Photo Clip String Lights', desc: 'Combine the warmth of fairy lights with a way to display photos. These lights have small clips for hanging pictures and mementos.', link: 'https://www.google.com/search?q=Photo+Clip+String+Lights' }
                 },
                 {
                     category: 'Tech',
@@ -283,11 +297,11 @@
 
             const checklistData = [
                 'Twin XL Mattress Topper', 'Waterproof Mattress Protector', 'Sleeping Pillows (2)', 'Twin XL Sheet Sets (2)', 'Twin XL Comforter', 'Headboard', 'Throw Blanket', 'Decorative Pillows',
-                'Under-Bed Storage Bins', 'Slim Velvet Hangers', 'Hanging Organizer', 'Shoe Rack', 'Over-the-Door Organizer', 'Desk Organizer', 'Over-the-Fridge Caddy',
+                'Under-Bed Storage Bins', 'Nightstand', 'Slim Velvet Hangers', 'Hanging Organizer', 'Shoe Rack', 'Over-the-Door Organizer', 'Desk Organizer', 'Over-the-Fridge Caddy',
                 'Mesh Shower Caddy', 'Bath Towels (2 sets)', 'Hand Towels (2 sets)', 'Shower Curtain & Liner', 'Bath Mat', 'Laundry Hamper', 'Detergent',
                 'Compact Stick Vacuum', 'Cleaning Supplies', 'Trash Can & Liners', 'Laptop & Charger', 'Surge Protector', 'LED Desk Lamp', 'Backpack',
                 'School Supplies', 'Mini-Fridge', 'Microwave', 'Reusable Water Bottle', 'Plates & Silverware', 'Coffee Maker', 'Area Rug',
-                'Removable Hooks/Putty', 'Full-Length Mirror', 'Fan', 'First-Aid Kit', 'Umbrella'
+                'Fairy Lights', 'Removable Hooks/Putty', 'Full-Length Mirror', 'Fan', 'First-Aid Kit', 'Umbrella'
             ];
 
             const gdocTemplate = `
@@ -339,12 +353,14 @@ AUTUMN'S PERSONAL CHECKLIST
 [ ] Throw Blanket
 [ ] Decorative Pillows
 
-**STORAGE & ORGANIZATION**
+**STORAGE, DECOR & ORGANIZATION**
 [ ] Under-Bed Storage Bins (Search: https://www.google.com/search?q=IRIS+USA+Weathertight+Storage+Box)
+[ ] Nightstand (Search: https://www.google.com/search?q=Furinno+Just+3-Tier+End+Table)
 [ ] Velvet Hangers (Search: https://www.google.com/search?q=Amazon+Basics+Slim+Velvet+Hangers)
 [ ] Hanging Closet Organizer
 [ ] Over-the-Door Organizer (Search: https://www.google.com/search?q=SimpleHouseware+24-Pocket+Clear+Over+The+Door+Hanging+Shoe+Organizer)
 [ ] Desk Organizer
+[ ] Fairy Lights (Search: https://www.google.com/search?q=Twinkle+Star+100+LED+Fairy+Lights)
 
 **BATHROOM & PERSONAL**
 [ ] Mesh Shower Caddy
@@ -374,12 +390,14 @@ JESS'S PERSONAL CHECKLIST
 [ ] Throw Blanket
 [ ] Decorative Pillows
 
-**STORAGE & ORGANIZATION**
+**STORAGE, DECOR & ORGANIZATION**
 [ ] Under-Bed Storage Bins (Search: https://www.google.com/search?q=IRIS+USA+Weathertight+Storage+Box)
+[ ] Nightstand (Search: https://www.google.com/search?q=Furinno+Just+3-Tier+End+Table)
 [ ] Velvet Hangers (Search: https://www.google.com/search?q=Amazon+Basics+Slim+Velvet+Hangers)
 [ ] Hanging Closet Organizer
 [ ] Over-the-Door Organizer (Search: https://www.google.com/search?q=SimpleHouseware+24-Pocket+Clear+Over+The+Door+Hanging+Shoe+Organizer)
 [ ] Desk Organizer
+[ ] Fairy Lights (Search: https://www.google.com/search?q=Twinkle+Star+100+LED+Fairy+Lights)
 
 **BATHROOM & PERSONAL**
 [ ] Mesh Shower Caddy
