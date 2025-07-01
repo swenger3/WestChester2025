@@ -1,0 +1,484 @@
+/* --- Reset & Base Styles --- */
+:root {
+    /* Color Palette - Inspired by achemicalorthodoxy.co.uk */
+    --primary-color: #2c3e50; /* Dark Blue/Slate */
+    --secondary-color: #3498db; /* Brighter Blue */
+    --accent-color: #f39c12; /* Orange/Yellow Accent */
+    --light-gray: #ecf0f1;   /* Very Light Gray */
+    --medium-gray: #bdc3c7; /* Medium Gray */
+    --dark-gray: #7f8c8d;   /* Darker Gray */
+    --text-color: #34495e;  /* Dark Slate Text */
+    --heading-color: #2c3e50; /* Slightly darker for headings */
+    --white-color: #ffffff;
+    --link-color: #3498db;
+    --link-hover-color: #2980b9;
+
+    /* Fonts */
+    --body-font: 'Open Sans', sans-serif;
+    --heading-font: 'Open Sans', sans-serif; /* Use same font, adjust weight */
+
+    /* Layout */
+    --base-font-size: 16px;
+    --line-height: 1.7;
+    --container-width: 1100px;
+    --header-height: 65px; /* Adjusted height */
+    --section-padding: 70px 0;
+    --content-block-margin: 40px 0;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--header-height); /* Offset for sticky header */
+    font-size: var(--base-font-size);
+}
+
+body {
+    font-family: var(--body-font);
+    line-height: var(--line-height);
+    color: var(--text-color);
+    background-color: var(--white-color);
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+/* --- Utility Classes --- */
+.container {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.alt-background {
+    background-color: var(--light-gray);
+    border-top: 1px solid #dde4e6; /* Subtle border */
+    border-bottom: 1px solid #dde4e6;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.button-container {
+    margin-top: 30px;
+}
+
+/* --- Typography --- */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--heading-font);
+    color: var(--heading-color);
+    font-weight: 600; /* Semi-bold headings */
+    line-height: 1.3;
+    margin-bottom: 0.75em;
+}
+
+h1 { font-size: 2.8rem; }
+h2 { font-size: 2.2rem; } /* Section titles */
+h3 { font-size: 1.5rem; } /* Content block titles */
+h4 { font-size: 1.2rem; }
+
+p {
+    margin-bottom: 1.2em;
+}
+
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover, a:focus {
+    color: var(--link-hover-color);
+    text-decoration: underline;
+}
+
+ul {
+    list-style: none; /* Remove default bullets */
+    padding-left: 0;
+    margin-bottom: 1.2em;
+}
+
+li {
+    margin-bottom: 0.6em;
+    padding-left: 1.5em; /* Space for icon */
+    position: relative;
+}
+
+/* Style for icons in lists */
+li > i.fa-fw { /* Target Font Awesome fixed-width icons */
+    position: absolute;
+    left: 0;
+    top: 0.3em; /* Adjust vertical alignment */
+    color: var(--secondary-color); /* Icon color */
+    font-size: 0.9em;
+}
+
+/* --- Buttons --- */
+.button {
+    display: inline-block;
+    background-color: var(--secondary-color);
+    color: var(--white-color);
+    padding: 12px 28px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.button:hover, .button:focus {
+    background-color: var(--link-hover-color);
+    color: var(--white-color);
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.button i.fa-fw {
+    margin-right: 8px;
+}
+
+/* --- Header --- */
+.site-header {
+    background-color: var(--white-color);
+    height: var(--header-height);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    transition: box-shadow 0.3s ease; /* Smooth shadow transition */
+}
+
+/* Optional: Add slightly stronger shadow on scroll
+body.scrolled .site-header {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+} */
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.site-title a {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+.site-title a:hover {
+    color: var(--secondary-color);
+    text-decoration: none;
+}
+
+.main-navigation .nav-links {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.main-navigation .nav-links li {
+    margin-left: 28px;
+    padding-left: 0; /* Override default li padding */
+    position: relative; /* Needed for potential hover effects */
+}
+.main-navigation .nav-links li > i.fa-fw {
+    display: none; /* Hide list icons in nav */
+}
+
+
+.main-navigation .nav-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 600; /* Slightly bolder nav links */
+    font-size: 0.95rem;
+    padding: 5px 0;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.main-navigation .nav-links a:hover,
+.main-navigation .nav-links a:focus {
+    color: var(--secondary-color);
+    text-decoration: none;
+}
+
+/* Optional underline effect for nav links */
+.main-navigation .nav-links a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -3px;
+    left: 0;
+    background-color: var(--secondary-color);
+    transition: width 0.3s ease;
+}
+
+.main-navigation .nav-links a:hover::after,
+.main-navigation .nav-links a:focus::after {
+    width: 100%;
+}
+
+.menu-toggle {
+    display: none; /* Hidden on desktop */
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-size: 1.6rem;
+    cursor: pointer;
+    padding: 5px;
+}
+
+/* --- Main Content & Sections --- */
+main {
+    padding-top: 0; /* No padding needed below sticky header */
+}
+
+.content-section {
+    padding: var(--section-padding);
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 25px;
+    color: var(--primary-color);
+    font-weight: 700; /* Bold section titles */
+}
+
+.section-intro {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--dark-gray);
+    max-width: 750px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 50px;
+}
+
+.content-block {
+    margin: var(--content-block-margin);
+    padding: 0; /* Add padding if needed for background/borders */
+}
+.content-block h3 {
+    margin-bottom: 20px;
+    color: var(--secondary-color); /* Use secondary color for subheadings */
+     display: flex; /* Align icon and text */
+    align-items: center;
+}
+.content-block h3 i.fa-fw {
+    margin-right: 10px;
+    color: var(--accent-color); /* Accent color for heading icons */
+    font-size: 1.1em;
+}
+
+
+/* Resource List Specific Styles */
+.resource-list ul {
+    padding-left: 0; /* Reset padding for resource lists */
+}
+.resource-list li {
+    padding-left: 0; /* Reset padding */
+    position: relative;
+    margin-bottom: 12px;
+}
+.resource-list li a {
+    display: inline-flex; /* Align icon and text nicely */
+    align-items: center;
+    font-weight: 400; /* Regular weight for resource links */
+}
+.resource-list li a i.fa-fw {
+    margin-right: 10px;
+    color: var(--accent-color); /* Use accent color for file icons */
+    font-size: 1.1em; /* Slightly larger file icons */
+    position: static; /* Override absolute positioning */
+    top: auto;
+    left: auto;
+}
+
+
+/* --- Hero Section --- */
+.hero-section {
+    background-color: var(--primary-color); /* Fallback color */
+    /* Example gradient - replace with image if desired */
+    background: linear-gradient(rgba(44, 62, 80, 0.85), rgba(44, 62, 80, 0.85)), url('https://placehold.co/1920x800/2c3e50/ecf0f1?text=Chemistry+Background') no-repeat center center;
+    background-size: cover;
+    color: var(--white-color);
+    padding: 120px 0; /* More padding */
+    text-align: center;
+}
+
+.hero-title {
+    font-size: 3.5rem; /* Larger hero title */
+    font-weight: 700;
+    color: var(--white-color);
+    margin-bottom: 15px;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    font-weight: 300; /* Lighter subtitle */
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 700px;
+    margin: 0 auto 30px auto;
+}
+
+.hero-button {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    font-weight: 700;
+}
+.hero-button:hover {
+     background-color: #d68910; /* Darker accent */
+     color: var(--white-color);
+}
+
+/* --- Footer --- */
+.site-footer {
+    background-color: var(--primary-color);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 40px 0;
+    text-align: center;
+    margin-top: 50px;
+    font-size: 0.9rem;
+}
+
+.site-footer p {
+    margin-bottom: 8px;
+}
+
+.site-footer a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.site-footer a:hover {
+    color: var(--white-color);
+    text-decoration: underline;
+}
+
+.social-links {
+    margin-top: 15px;
+}
+.social-links a {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.4rem;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+}
+.social-links a:hover {
+    color: var(--white-color);
+}
+
+
+/* --- Responsiveness --- */
+@media (max-width: 992px) {
+    :root {
+        --container-width: 960px;
+        --section-padding: 60px 0;
+    }
+    h1 { font-size: 2.5rem; }
+    h2 { font-size: 2rem; }
+    h3 { font-size: 1.4rem; }
+    .hero-title { font-size: 3rem; }
+    .hero-subtitle { font-size: 1.3rem; }
+}
+
+@media (max-width: 768px) {
+    html {
+        font-size: 15px;
+    }
+    :root {
+        --header-height: 60px; /* Slightly smaller header */
+    }
+
+    .site-title a {
+        font-size: 1.2rem;
+    }
+
+    .menu-toggle {
+        display: block; /* Show hamburger */
+    }
+
+    .main-navigation .nav-links {
+        display: none; /* Hide menu by default */
+        position: absolute;
+        top: var(--header-height); /* Position below header */
+        left: 0;
+        width: 100%;
+        background-color: var(--white-color);
+        flex-direction: column;
+        padding: 10px 0;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        border-top: 1px solid var(--light-gray);
+    }
+
+    .main-navigation .nav-links.active {
+        display: flex; /* Show when active */
+    }
+
+    .main-navigation .nav-links li {
+        margin: 0;
+        text-align: center;
+        width: 100%;
+    }
+
+    .main-navigation .nav-links a {
+        padding: 12px 20px;
+        display: block;
+        width: 100%;
+        border-bottom: 1px solid var(--light-gray);
+    }
+     .main-navigation .nav-links li:last-child a {
+        border-bottom: none;
+    }
+    .main-navigation .nav-links a::after {
+        display: none; /* No underline on mobile nav */
+    }
+     .main-navigation .nav-links a:hover,
+     .main-navigation .nav-links a:focus {
+        background-color: var(--light-gray);
+        color: var(--secondary-color);
+     }
+
+    .content-section {
+        padding: 50px 0;
+    }
+    h1 { font-size: 2.2rem; }
+    h2 { font-size: 1.8rem; }
+    h3 { font-size: 1.3rem; }
+    .section-intro { font-size: 1rem; margin-bottom: 40px;}
+
+    .hero-section { padding: 80px 0; }
+    .hero-title { font-size: 2.5rem; }
+    .hero-subtitle { font-size: 1.2rem; }
+}
+
+@media (max-width: 480px) {
+    html {
+        font-size: 14px;
+    }
+    :root {
+        --section-padding: 40px 0;
+    }
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.6rem; }
+    h3 { font-size: 1.2rem; }
+    .hero-section { padding: 60px 0; }
+    .hero-title { font-size: 2.1rem; }
+    .hero-subtitle { font-size: 1.1rem; }
+    .button { padding: 10px 20px; font-size: 0.9rem; }
