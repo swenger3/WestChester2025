@@ -1,733 +1,1400 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Dorm Guide: Allegheny Hall "Marshall" Suite</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Warm & Welcoming -->
-    <!-- Application Structure Plan: A single-page, vertical-scrolling application with a sticky navigation bar for smooth transitions between sections. This structure transforms a long text document into an easily digestible and engaging user journey. The core sections are: 1) A visual 'Space Overview' with key stats as interactive cards. 2) Thematic sections for 'Comfort,' 'Storage,' and 'Study' essentials. 3) A dynamic, filterable 'Shopping Guide' which is the main interactive feature, solving the broken link issue of the source and enhancing usability. 4) A final interactive 'Checklist' to provide a sense of completion. This structure prioritizes user task-flow (understand, plan, shop, pack) over the rigid chapter structure of the original report. -->
-    <!-- Visualization & Content Choices: 1) Room/Furniture Dimensions -> Inform -> Data Cards (HTML/CSS) -> Interactive hover states make exploring key stats more engaging than a static table. 2) Mattress Topper Comparison -> Compare -> Horizontal Bar Chart (Chart.js/Canvas) -> Provides a quick visual comparison to help users make a data-informed decision on a key purchase. 3) Shopping List -> Organize/Action -> Filterable Card Grid (JS) -> Transforms the core content from a static table into a powerful, user-driven tool. Allows users to focus on specific categories, which is more efficient. 4) Final Needs List -> Organize/Action -> Interactive Checklist (JS) -> Gives users a practical tool to track their shopping progress, making the app more useful in the real world. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #FDFBF8; /* Warm Off-White */
-            color: #4A4A4A; /* Dark Gray */
-        }
-        h1, h2, h3, h4 {
-            font-family: 'Lora', serif;
-        }
-        .chart-container {
-            position: relative;
-            margin: auto;
-            height: 300px;
-            width: 100%;
-            max-width: 600px;
-        }
-        .nav-link {
-            transition: color 0.3s ease, border-color 0.3s ease;
-            border-bottom: 2px solid transparent;
-        }
-        .nav-link:hover, .nav-link.active {
-            color: #C06C56; /* Accent Rust */
-            border-bottom-color: #C06C56;
-        }
-        .filter-btn {
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        .filter-btn.active {
-            background-color: #C06C56;
-            color: #FFFFFF;
-        }
-        .checklist-item label {
-            transition: color 0.3s ease, text-decoration 0.3s ease;
-        }
-        .checklist-item input:checked + label {
-            color: #9A9A9A;
-            text-decoration: line-through;
-        }
-        .planning-hub-card ul {
-            list-style-position: inside;
-        }
-        .planning-hub-card li {
-            padding-left: 0.5rem;
-            margin-bottom: 0.25rem;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phenomena-Driven Chemistry — Course Site</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,800;1,9..144,400&family=DM+Mono:wght@400;500&family=Bricolage+Grotesque:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:    #0D1B2A;
+  --slate:   #1A2E42;
+  --slate2:  #243B52;
+  --teal:    #00D4AA;
+  --teal2:   #00B894;
+  --amber:   #F4A261;
+  --coral:   #E63946;
+  --mist:    #E8F5F2;
+  --fog:     #F0F7F6;
+  --white:   #FAFEFF;
+  --ink:     #0D1B2A;
+  --mid:     #4A6278;
+  --light:   #8BA4B4;
+  --border:  rgba(0,212,170,0.18);
+  --e-engage:   #4361EE;
+  --e-explore:  #2DC653;
+  --e-explain:  #F9C74F;
+  --e-elaborate:#F8961E;
+  --e-evaluate: #E63946;
+  --shadow: 0 4px 24px rgba(13,27,42,0.10);
+  --shadow-lg: 0 12px 48px rgba(13,27,42,0.15);
+}
+
+/* ── RESET ─────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Bricolage Grotesque', sans-serif; background: var(--fog); color: var(--ink); min-height: 100vh; }
+
+/* ── TYPOGRAPHY ─────────────────────────── */
+h1,h2,h3,h4 { font-family: 'Fraunces', serif; line-height: 1.15; }
+code, .mono { font-family: 'DM Mono', monospace; }
+
+/* ── SCROLLBAR ──────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--mist); }
+::-webkit-scrollbar-thumb { background: var(--teal2); border-radius: 3px; }
+
+/* ── LAYOUT ─────────────────────────────── */
+#app { display: flex; flex-direction: column; min-height: 100vh; }
+main { flex: 1; padding-top: 72px; }
+
+/* ══════════════════════════════════════════
+   NAV
+══════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(13,27,42,0.97);
+  backdrop-filter: blur(12px);
+  height: 72px;
+  display: flex; align-items: center;
+  padding: 0 2rem;
+  border-bottom: 1px solid rgba(0,212,170,0.15);
+  gap: 0;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; flex-shrink: 0;
+}
+.nav-logo {
+  width: 36px; height: 36px;
+  background: var(--teal);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 14px; font-weight: 500;
+  color: var(--navy);
+}
+.nav-title {
+  font-family: 'Fraunces', serif;
+  font-size: 16px; font-weight: 600;
+  color: var(--white);
+  line-height: 1.2;
+}
+.nav-title span { color: var(--teal); }
+.nav-links {
+  display: flex; align-items: center; gap: 2px;
+  margin-left: 2rem;
+  list-style: none;
+  flex: 1;
+}
+.nav-links a, .nav-dropdown > button {
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all .2s;
+  cursor: pointer;
+  background: none; border: none; font-family: inherit;
+  white-space: nowrap;
+}
+.nav-links a:hover, .nav-dropdown > button:hover,
+.nav-links a.active { color: var(--teal); background: rgba(0,212,170,0.08); }
+
+/* Dropdown */
+.nav-dropdown { position: relative; }
+.nav-dropdown > button::after { content: ' ▾'; font-size: 10px; }
+.dropdown-menu {
+  display: none; position: absolute; top: calc(100% + 8px); left: 0;
+  background: var(--slate);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px;
+  min-width: 200px;
+  box-shadow: var(--shadow-lg);
+  z-index: 200;
+  display: none;
+}
+.nav-dropdown:hover .dropdown-menu,
+.nav-dropdown:focus-within .dropdown-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+.dropdown-menu a {
+  color: rgba(255,255,255,0.8) !important;
+  font-size: 13px !important;
+  padding: 6px 10px !important;
+  border-radius: 6px;
+  display: flex; align-items: center; gap: 6px;
+}
+.dropdown-menu a:hover { background: rgba(0,212,170,0.12) !important; }
+.unit-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+
+/* View toggle */
+.view-toggle {
+  display: flex; align-items: center; gap: 10px;
+  margin-left: auto;
+}
+.view-toggle label { color: rgba(255,255,255,0.5); font-size: 12px; white-space: nowrap; }
+.toggle-switch {
+  display: flex;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(0,212,170,0.2);
+  border-radius: 20px;
+  padding: 3px;
+  gap: 2px;
+}
+.toggle-btn {
+  padding: 5px 14px;
+  border-radius: 16px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.5);
+  font-size: 12px; font-weight: 500;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: inherit;
+}
+.toggle-btn.active {
+  background: var(--teal);
+  color: var(--navy);
+}
+
+/* ══════════════════════════════════════════
+   PAGE SYSTEM
+══════════════════════════════════════════ */
+.page { display: none; animation: fadeIn .3s ease; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ══════════════════════════════════════════
+   STUDENT vs TEACHER visibility
+══════════════════════════════════════════ */
+body.student-view .teacher-only { display: none !important; }
+body.teacher-view .student-only { display: none !important; }
+
+/* ══════════════════════════════════════════
+   HOME PAGE
+══════════════════════════════════════════ */
+.hero {
+  background: var(--navy);
+  min-height: 480px;
+  display: flex; align-items: center;
+  padding: 80px 2rem 60px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 80% at 80% 50%, rgba(0,212,170,0.08) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 60% at 20% 80%, rgba(244,162,97,0.06) 0%, transparent 60%);
+}
+.hero-grid {
+  position: absolute; inset: 0; opacity: 0.04;
+  background-image: linear-gradient(rgba(0,212,170,1) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(0,212,170,1) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.hero-inner { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 16px;
+}
+.hero h1 {
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1.08;
+  margin-bottom: 24px;
+}
+.hero h1 em { font-style: italic; color: var(--teal); }
+.hero-sub {
+  font-size: 17px; line-height: 1.6;
+  color: rgba(255,255,255,0.65);
+  max-width: 600px; margin-bottom: 40px;
+}
+.hero-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid rgba(0,212,170,0.3);
+  border-radius: 20px;
+  font-size: 12px; font-weight: 500;
+  color: rgba(255,255,255,0.7);
+  background: rgba(0,212,170,0.05);
+}
+.chip-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); }
+
+/* Section wrapper */
+.section { padding: 64px 2rem; max-width: 1100px; margin: 0 auto; }
+.section-tight { padding: 48px 2rem; max-width: 1100px; margin: 0 auto; }
+.section-header { margin-bottom: 40px; }
+.section-header .eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--teal2); margin-bottom: 8px;
+}
+.section-header h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; color: var(--navy); }
+.section-header p { margin-top: 10px; color: var(--mid); font-size: 15.5px; line-height: 1.6; max-width: 600px; }
+
+/* ── UNIT TIMELINE ──────────────────────── */
+.timeline-bg {
+  background: var(--navy);
+  padding: 64px 0;
+}
+.timeline-inner { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+.timeline-header { margin-bottom: 40px; }
+.timeline-header .eyebrow { font-family: 'DM Mono'; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; }
+.timeline-header h2 { font-size: 2rem; font-weight: 700; color: var(--white); }
+.timeline-header p { color: rgba(255,255,255,0.5); font-size: 14px; margin-top: 6px; }
+
+.timeline-track {
+  display: flex; align-items: stretch;
+  gap: 0;
+  position: relative;
+}
+.timeline-track::before {
+  content: '';
+  position: absolute;
+  top: 32px; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--teal), var(--amber));
+  z-index: 0;
+}
+.timeline-unit {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; align-items: center;
+  position: relative; z-index: 1;
+  cursor: pointer;
+}
+.t-node {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 3px solid var(--navy);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono'; font-size: 9px; font-weight: 500;
+  color: var(--navy); margin-bottom: 12px;
+  transition: transform .2s;
+  flex-shrink: 0;
+}
+.timeline-unit:hover .t-node { transform: scale(1.2); }
+.t-label {
+  text-align: center;
+  font-size: 10.5px; line-height: 1.3;
+  color: rgba(255,255,255,0.55);
+  transition: color .2s;
+  padding: 0 2px;
+}
+.timeline-unit:hover .t-label { color: rgba(255,255,255,0.9); }
+.t-days {
+  font-family: 'DM Mono'; font-size: 9px;
+  color: rgba(255,255,255,0.25);
+  margin-top: 4px;
+}
+
+/* ── 3-col card grid ─ */
+.card-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.card-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+.card {
+  background: var(--white);
+  border: 1px solid rgba(13,27,42,0.07);
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: var(--shadow);
+  transition: transform .2s, box-shadow .2s;
+}
+.card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.card-icon { font-size: 28px; margin-bottom: 14px; }
+.card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; color: var(--navy); }
+.card p { font-size: 14px; line-height: 1.6; color: var(--mid); }
+
+/* ══════════════════════════════════════════
+   FRAMEWORK PAGE
+══════════════════════════════════════════ */
+.arch-split {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 40px;
+}
+.arch-panel {
+  background: var(--navy);
+  border-radius: 16px;
+  padding: 36px;
+  color: var(--white);
+  position: relative; overflow: hidden;
+}
+.arch-panel::before {
+  content: '';
+  position: absolute; top: -40px; right: -40px;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,212,170,0.12), transparent 70%);
+}
+.arch-panel .label {
+  font-family: 'DM Mono'; font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 12px;
+}
+.arch-panel h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 16px; }
+.arch-panel p { font-size: 14px; line-height: 1.65; color: rgba(255,255,255,0.65); }
+
+.rhythm-steps {
+  display: flex; flex-direction: column; gap: 12px; margin-top: 40px;
+}
+.rhythm-step {
+  display: flex; gap: 20px; align-items: flex-start;
+  background: var(--white);
+  border-radius: 12px; padding: 20px 24px;
+  border-left: 4px solid var(--teal);
+  box-shadow: var(--shadow);
+}
+.rhythm-num {
+  font-family: 'DM Mono'; font-size: 13px; font-weight: 500;
+  color: var(--teal); min-width: 28px; padding-top: 2px;
+}
+.rhythm-step h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.rhythm-step p { font-size: 13.5px; color: var(--mid); line-height: 1.5; }
+
+/* Triple E cards */
+.triple-e { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; }
+.e-card {
+  border-radius: 14px; padding: 28px;
+  background: var(--white);
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: var(--shadow);
+}
+.e-card .e-label {
+  font-family: 'DM Mono'; font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.e-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; }
+.e-card p { font-size: 13.5px; color: var(--mid); line-height: 1.6; }
+
+/* ══════════════════════════════════════════
+   STANDARDS PAGE
+══════════════════════════════════════════ */
+.std-table { width: 100%; border-collapse: collapse; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
+.std-table thead tr { background: var(--navy); }
+.std-table thead th { padding: 14px 20px; text-align: left; font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.7); font-family: 'DM Mono'; letter-spacing: .08em; }
+.std-table tbody tr { background: var(--white); border-bottom: 1px solid rgba(0,0,0,0.05); }
+.std-table tbody tr:hover { background: var(--fog); }
+.std-table td { padding: 16px 20px; font-size: 14px; vertical-align: top; }
+.std-code { font-family: 'DM Mono'; font-size: 12px; color: var(--teal2); font-weight: 500; white-space: nowrap; }
+.std-dots { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.std-dot-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 2px 10px;
+  border-radius: 12px; font-size: 11px;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+/* ══════════════════════════════════════════
+   UNIT PAGES
+══════════════════════════════════════════ */
+.unit-hero {
+  padding: 60px 2rem 48px;
+  position: relative;
+}
+.unit-hero-inner { max-width: 1100px; margin: 0 auto; }
+.unit-hero .unit-num {
+  font-family: 'DM Mono'; font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.unit-hero h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: 16px; }
+.unit-hero .eq {
+  font-size: 16px; font-style: italic;
+  padding: 14px 20px;
+  border-left: 3px solid currentColor;
+  border-radius: 0 8px 8px 0;
+  background: rgba(255,255,255,0.5);
+  max-width: 640px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+.unit-meta { display: flex; gap: 16px; flex-wrap: wrap; }
+.meta-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 14px;
+  border-radius: 20px; font-size: 12px;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid rgba(0,0,0,0.1);
+  color: var(--ink);
+}
+
+.unit-body { max-width: 1100px; margin: 0 auto; padding: 0 2rem 80px; }
+
+/* Foundation box */
+.foundation-box {
+  background: var(--navy);
+  border-radius: 14px; padding: 28px 32px;
+  color: var(--white); margin-bottom: 28px;
+  display: flex; gap: 24px; align-items: flex-start;
+}
+.foundation-box .fb-icon { font-size: 32px; flex-shrink: 0; margin-top: 4px; }
+.foundation-box .fb-label { font-family: 'DM Mono'; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--teal); margin-bottom: 6px; }
+.foundation-box h3 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
+.foundation-box p { font-size: 13.5px; color: rgba(255,255,255,0.65); line-height: 1.6; }
+
+/* Phenomenon card */
+.phenomenon-card {
+  border-radius: 14px; overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: var(--shadow);
+  margin-bottom: 28px;
+  background: var(--white);
+}
+.phen-header {
+  padding: 20px 28px;
+  display: flex; align-items: center; gap: 14px;
+}
+.phen-icon { font-size: 28px; }
+.phen-label { font-family: 'DM Mono'; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--mid); margin-bottom: 2px; }
+.phen-title { font-size: 1.05rem; font-weight: 700; }
+.phen-body { padding: 0 28px 24px; }
+.phen-dq {
+  background: var(--fog);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  font-style: italic;
+  color: var(--mid);
+  font-size: 14.5px;
+  line-height: 1.55;
+  border-left: 3px solid var(--teal);
+}
+.phen-uq {
+  font-size: 13.5px; color: var(--mid); line-height: 1.6;
+}
+
+/* 5E Storyline */
+.five-e { display: flex; flex-direction: column; gap: 8px; margin-bottom: 28px; }
+.five-e-row {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--white);
+  border-radius: 10px; padding: 14px 20px;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.five-e-badge {
+  display: flex; align-items: center; gap: 8px;
+  min-width: 120px;
+}
+.five-e-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.five-e-name { font-family: 'DM Mono'; font-size: 11px; font-weight: 500; letter-spacing: .05em; }
+.five-e-text { font-size: 14px; color: var(--mid); line-height: 1.5; }
+
+/* Packet download */
+.packet-box {
+  background: linear-gradient(135deg, var(--teal) 0%, var(--teal2) 100%);
+  border-radius: 14px; padding: 24px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 28px;
+  color: var(--navy);
+}
+.packet-box h4 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+.packet-box p { font-size: 13px; opacity: 0.75; }
+.download-btn {
+  padding: 10px 22px;
+  background: var(--navy);
+  color: var(--teal);
+  border: none; border-radius: 8px;
+  font-family: 'DM Mono'; font-size: 12px; font-weight: 500;
+  cursor: pointer; white-space: nowrap;
+  transition: opacity .2s;
+}
+.download-btn:hover { opacity: .8; }
+
+/* ── TEACHER SECTION ─────────────────────── */
+.teacher-section {
+  margin-top: 8px;
+}
+.teacher-banner {
+  background: rgba(244,162,97,0.1);
+  border: 1px solid rgba(244,162,97,0.3);
+  border-radius: 10px;
+  padding: 12px 20px;
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 16px;
+  font-size: 13px; color: #8B5E2E;
+}
+
+/* Day accordion */
+.day-accordion { display: flex; flex-direction: column; gap: 4px; }
+.day-item {
+  background: var(--white);
+  border: 1px solid rgba(0,0,0,0.07);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.day-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 18px;
+  cursor: pointer;
+  transition: background .15s;
+  user-select: none;
+}
+.day-header:hover { background: var(--fog); }
+.day-num {
+  font-family: 'DM Mono'; font-size: 11px;
+  color: var(--light); min-width: 44px;
+}
+.day-goal { font-size: 13.5px; font-weight: 500; flex: 1; line-height: 1.4; }
+.day-arrow { font-size: 10px; color: var(--light); transition: transform .2s; }
+.day-item.open .day-arrow { transform: rotate(90deg); }
+.day-body {
+  display: none; padding: 4px 18px 16px 76px;
+  font-size: 13px; color: var(--mid); line-height: 1.6;
+}
+.day-item.open .day-body { display: block; }
+.day-body strong { color: var(--navy); }
+.day-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 2px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 500;
+  margin-right: 6px; margin-bottom: 4px;
+}
+.tag-3e { background: rgba(244,162,97,0.15); color: #8B5E2E; border: 1px solid rgba(244,162,97,0.35); }
+
+/* ══════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════ */
+footer {
+  background: var(--navy);
+  padding: 40px 2rem;
+  text-align: center;
+}
+footer .f-logo { font-family: 'Fraunces'; font-size: 1.1rem; color: var(--teal); margin-bottom: 8px; }
+footer p { font-size: 12.5px; color: rgba(255,255,255,0.35); }
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+@media (max-width: 860px) {
+  .card-grid-3 { grid-template-columns: 1fr 1fr; }
+  .arch-split, .triple-e { grid-template-columns: 1fr; }
+  .timeline-track { flex-wrap: wrap; gap: 16px; }
+  .timeline-track::before { display: none; }
+  .timeline-unit { flex: 0 0 calc(25% - 12px); }
+  .t-label { font-size: 9.5px; }
+}
+@media (max-width: 600px) {
+  .card-grid-3, .card-grid-2 { grid-template-columns: 1fr; }
+  nav { padding: 0 1rem; }
+  .nav-links { display: none; }
+}
+</style>
 </head>
-<body class="antialiased">
+<body class="student-view">
+<div id="app">
 
-    <!-- Header & Nav -->
-    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
-        <nav class="container mx-auto px-6 py-3">
-            <div class="flex justify-between items-center">
-                <h1 class="text-xl font-semibold text-[#C06C56]">Allegheny Hall Guide</h1>
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="#overview" class="nav-link text-gray-600 font-medium pb-1">Overview</a>
-                    <a href="#planning-hub" class="nav-link text-gray-600 font-medium pb-1">Roommate Plan</a>
-                    <a href="#shopping" class="nav-link text-gray-600 font-medium pb-1">Shop The Look</a>
-                    <a href="#checklist" class="nav-link text-gray-600 font-medium pb-1">Checklist</a>
-                </div>
-                <div class="md:hidden">
-                    <button id="menu-btn" class="text-gray-600 focus:outline-none">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-                    </button>
-                </div>
-            </div>
-             <!-- Mobile Menu -->
-            <div id="mobile-menu" class="hidden md:hidden mt-3">
-                <a href="#overview" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100 rounded">Overview</a>
-                <a href="#planning-hub" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100 rounded">Roommate Plan</a>
-                <a href="#shopping" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100 rounded">Shop The Look</a>
-                <a href="#checklist" class="block py-2 px-4 text-sm text-gray-600 hover:bg-gray-100 rounded">Checklist</a>
-            </div>
-        </nav>
-    </header>
+<!-- ════════════════════════════ NAV ════ -->
+<nav>
+  <a class="nav-brand" href="#" onclick="showPage('home')">
+    <div class="nav-logo">Chem</div>
+    <div class="nav-title">Phenomena<span>Chem</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#" onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
+    <li><a href="#" onclick="showPage('framework')" id="nav-framework">Framework</a></li>
+    <li><a href="#" onclick="showPage('standards')" id="nav-standards">Standards</a></li>
+    <li class="nav-dropdown">
+      <button>Units 1–10</button>
+      <div class="dropdown-menu" id="unitDropdown"></div>
+    </li>
+  </ul>
+  <div class="view-toggle">
+    <label>View:</label>
+    <div class="toggle-switch">
+      <button class="toggle-btn active" id="btn-student" onclick="setView('student')">Student</button>
+      <button class="toggle-btn" id="btn-teacher" onclick="setView('teacher')">Teacher</button>
+    </div>
+  </div>
+</nav>
 
-    <main class="container mx-auto px-6 py-12">
+<main>
 
-        <!-- Hero Section -->
-        <section class="text-center mb-20">
-            <h1 class="text-4xl md:text-6xl font-bold text-gray-800 mb-4">Your Allegheny Hall Suite</h1>
-            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">An interactive guide to transforming your "Marshall" suite into the perfect home away from home. Let's get you ready for an amazing year at WCU!</p>
-        </section>
+<!-- ════════════════════════════ PAGE: HOME ════ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-inner">
+      <div class="hero-eyebrow">PA STEELS — High School Chemistry — 90 Days</div>
+      <h1>A <em>phenomena-driven</em> chemistry semester built to make sense of the invisible world.</h1>
+      <p class="hero-sub">Every unit launches with a puzzling real-world event. Every lesson is designed to reduce cognitive load while deepening particle-level understanding — through the 3D STEELS standards.</p>
+      <div class="hero-chips">
+        <div class="chip"><span class="chip-dot"></span>10 Units</div>
+        <div class="chip"><span class="chip-dot"></span>102 Days</div>
+        <div class="chip"><span class="chip-dot"></span>Modeling-First</div>
+        <div class="chip"><span class="chip-dot"></span>CLT-Aligned</div>
+        <div class="chip"><span class="chip-dot"></span>Triple E Technology</div>
+        <div class="chip"><span class="chip-dot"></span>AMTA Norms</div>
+      </div>
+    </div>
+  </div>
 
-        <!-- Overview Section -->
-        <section id="overview" class="mb-20 pt-16 -mt-16">
-            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">The Space: An Overview</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                <!-- Data Cards -->
-                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                    <h3 class="font-semibold text-lg text-[#C06C56] mb-2">Total Suite Size</h3>
-                    <p class="text-4xl font-bold text-gray-800">844 <span class="text-2xl font-medium">sq. ft.</span></p>
-                    <p class="text-gray-500 mt-2">A two-bedroom, two-bathroom shared space.</p>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                    <h3 class="font-semibold text-lg text-[#C06C56] mb-2">Bedroom Size</h3>
-                    <p class="text-4xl font-bold text-gray-800">156-185 <span class="text-2xl font-medium">sq. ft.</span></p>
-                    <p class="text-gray-500 mt-2">Carpeted and shared with one roommate.</p>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                    <h3 class="font-semibold text-lg text-[#C06C56] mb-2">Under-Bed Storage</h3>
-                    <p class="text-4xl font-bold text-gray-800">31" <span class="text-2xl font-medium">max height</span></p>
-                    <p class="text-gray-500 mt-2">Your prime real estate for bulky items.</p>
-                </div>
-                 <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                    <h3 class="font-semibold text-lg text-[#C06C56] mb-2">Closet Dimensions</h3>
-                    <p class="text-4xl font-bold text-gray-800">42"W x 24"D</p>
-                    <p class="text-gray-500 mt-2">Generous personal storage to be optimized.</p>
-                </div>
-                 <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                    <h3 class="font-semibold text-lg text-[#C06C56] mb-2">Living Room</h3>
-                    <p class="text-4xl font-bold text-gray-800">Unfurnished</p>
-                    <p class="text-gray-500 mt-2">A blank canvas for you and your roommates.</p>
-                </div>
-                 <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                    <h3 class="font-semibold text-lg text-[#C06C56] mb-2">Laundry</h3>
-                    <p class="text-4xl font-bold text-gray-800">Free</p>
-                    <p class="text-gray-500 mt-2">Washers and dryers are on every floor.</p>
-                </div>
-            </div>
-            
-            <div class="bg-white rounded-lg shadow-lg p-8">
-                <h3 class="text-2xl font-bold mb-4 text-gray-800">Key Rules & Regulations</h3>
-                <div id="rules-container">
-                </div>
-            </div>
-        </section>
+  <!-- Timeline -->
+  <div class="timeline-bg">
+    <div class="timeline-inner">
+      <div class="timeline-header">
+        <div class="eyebrow">The Storyline at a Glance</div>
+        <h2>10-Unit Journey Through Matter</h2>
+        <p>Click any unit node to jump to its full page →</p>
+      </div>
+      <div class="timeline-track" id="homeTimeline"></div>
+    </div>
+  </div>
 
-        <!-- Roommate Planning Hub Section -->
-        <section id="planning-hub" class="mb-20 pt-16 -mt-16">
-            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">Roommate Planning Hub</h2>
-            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-8">Hey Autumn & Jess! Planning your shared spaces is the first step to a great year. Use this template to coordinate who's bringing what. This section looks great on the site, and the "Copy Plan" button provides a simplified version perfect for pasting into a Google Doc!</p>
-            
-            <div id="planning-hub-visual" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Visual planning hub will be injected by JS -->
-            </div>
+  <!-- How it Works -->
+  <div class="section">
+    <div class="section-header">
+      <div class="eyebrow">How the Course Works</div>
+      <h2>Three Interlocking Frameworks</h2>
+      <p>Every lesson weaves together three research-backed systems to create a coherent learning experience.</p>
+    </div>
+    <div class="card-grid-3">
+      <div class="card">
+        <div class="card-icon">🧠</div>
+        <h3>Cognitive Load Theory</h3>
+        <p>Pre-drawn base pictorial layouts, integrated formats, and faded scaffolding reduce extrinsic load so working memory focuses on sense-making, not logistics.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📖</div>
+        <h3>3D Storyline Design</h3>
+        <p>Each unit is anchored to a real, puzzling phenomenon. A Driving Question Board tracks what students figure out across the 5E sequence toward a synthesis CER.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💻</div>
+        <h3>Triple E Technology</h3>
+        <p>Digital tools are audited for Engagement, Enhancement, or Extension — ensuring they elevate unobservable reasoning without adding unnecessary cognitive load.</p>
+      </div>
+    </div>
+  </div>
 
-            <button id="copy-btn" class="mt-8 mx-auto block bg-[#C06C56] text-white font-bold py-2 px-6 rounded-lg hover:bg-opacity-90 transition-colors">Copy Google Doc Plan</button>
-            <div id="copy-success" class="text-center mt-2 text-green-600 font-medium hidden">Copied to clipboard!</div>
-        </section>
+  <!-- Mission statement -->
+  <div style="background:var(--navy); padding: 64px 2rem;">
+    <div style="max-width:800px; margin:0 auto; text-align:center;">
+      <div style="font-family:'DM Mono'; font-size:10.5px; letter-spacing:.15em; text-transform:uppercase; color:var(--teal); margin-bottom:16px;">Course Mission</div>
+      <h2 style="font-family:'Fraunces'; font-size:clamp(1.5rem,3vw,2.2rem); font-weight:600; color:var(--white); line-height:1.3; font-style:italic;">"Welcome to a phenomena-driven chemistry semester designed to minimize extrinsic load while maximizing student sense-making through the 3D STEELS standards."</h2>
+    </div>
+  </div>
+</div>
 
-        <!-- Interactive Chart Section -->
-        <section class="mb-20 pt-16 -mt-16">
-            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">Data-Driven Decisions</h2>
-             <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-12">Choosing the right mattress topper is one of the most important upgrades for dorm life. Here’s a look at how our top recommendations compare on a value score, blending cost-effectiveness with user satisfaction.</p>
-            <div class="bg-white p-6 rounded-lg shadow-lg">
-                <h3 class="text-xl font-bold mb-4 text-center">Mattress Topper Value Comparison</h3>
-                <div class="chart-container">
-                    <canvas id="topperChart"></canvas>
-                </div>
-            </div>
-        </section>
+<!-- ════════════════════════════ PAGE: FRAMEWORK ════ -->
+<div class="page" id="page-framework">
+  <div class="section">
+    <div class="section-header">
+      <div class="eyebrow">The Architecture</div>
+      <h2>How Every Lesson Is Built</h2>
+      <p>A predictable double architecture reduces cognitive friction and allows students to focus mental energy on sense-making rather than navigation.</p>
+    </div>
+    <div class="arch-split">
+      <div class="arch-panel">
+        <div class="label">The "Why"</div>
+        <h3>3D Storyline Design</h3>
+        <p>Every unit is anchored to an anchor phenomenon that creates narrative tension. The Driving Question Board tracks which questions students can and cannot yet answer, creating a coherent storyline across all five 5E phases.</p>
+        <br>
+        <p style="color:rgba(255,255,255,0.4); font-size:12px;">Engage → Explore → Explain → Elaborate → Evaluate</p>
+      </div>
+      <div class="arch-panel" style="background:var(--slate2);">
+        <div class="label">The "How"</div>
+        <h3>Cognitive Load Theory</h3>
+        <p>Initial models use base pictorial layouts (pre-drawn container outlines). As expertise grows, scaffolding is faded. Integrated formats place diagrams, data tables, and instructions on the same page to eliminate split-attention.</p>
+        <br>
+        <p style="color:rgba(255,255,255,0.4); font-size:12px;">Germane load maximized → Extrinsic load eliminated</p>
+      </div>
+    </div>
 
+    <div class="section-header" style="margin-top:48px;">
+      <div class="eyebrow">Daily Rhythm</div>
+      <h2>The Four-Part Lesson Structure</h2>
+    </div>
+    <div class="rhythm-steps">
+      <div class="rhythm-step" style="border-color:#4361EE;">
+        <div class="rhythm-num">01</div>
+        <div><h4>Review / Activate</h4><p>Brief retrieval of prior knowledge using AMTA whiteboard checks or a targeted exit ticket review. Connects to the ongoing storyline.</p></div>
+      </div>
+      <div class="rhythm-step" style="border-color:var(--teal);">
+        <div class="rhythm-num">02</div>
+        <div><h4>Model / Explicit Instruction</h4><p>Teacher demonstrates the unobservable-to-observable connection. Uses base pictorial layouts, zoom-in circles, and I Do worked examples.</p></div>
+      </div>
+      <div class="rhythm-step" style="border-color:var(--amber);">
+        <div class="rhythm-num">03</div>
+        <div><h4>Guided Sense-Making</h4><p>Students work in AMTA modeling groups on lab investigations, card sorts, or collaborative whiteboard tasks with faded scaffolding.</p></div>
+      </div>
+      <div class="rhythm-step" style="border-color:var(--coral);">
+        <div class="rhythm-num">04</div>
+        <div><h4>Exit Ticket</h4><p>A focused two-question formative check — one macroscopic observation, one particle-level explanation — informing the next day's lesson.</p></div>
+      </div>
+    </div>
 
-        <!-- Shopping Section -->
-        <section id="shopping" class="mb-20 pt-16 -mt-16">
-            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">Shop The Look</h2>
-            <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-8">This curated shopping guide brings the essentials list to life. Filter by category to find exactly what you need. Each item features three hand-picked, highly-rated options to fit any budget or style.</p>
-            
-            <div id="filter-container" class="flex flex-wrap justify-center gap-2 mb-10">
-            </div>
-            
-            <div id="shopping-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            </div>
-        </section>
-
-        <!-- Checklist Section -->
-        <section id="checklist" class="pt-16 -mt-16">
-            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">Your Move-In Checklist</h2>
-             <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-12">Use this interactive checklist to track your shopping and packing. Check items off as you go to make sure nothing gets left behind. Happy packing!</p>
-            <div class="bg-white p-8 rounded-lg shadow-lg">
-                <div id="checklist-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-4">
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <footer class="bg-gray-800 text-white mt-20">
-        <div class="container mx-auto px-6 py-8 text-center">
-            <p>&copy; 2024 Interactive Dorm Guide. Created to help WCU students thrive.</p>
-            <p class="text-sm text-gray-400 mt-2">This is an informational tool and not affiliated with West Chester University. Product links are for convenience.</p>
+    <!-- Faded Scaffolding -->
+    <div class="section-header" style="margin-top:48px;">
+      <div class="eyebrow">CLT Strategy</div>
+      <h2>Faded Scaffolding Across the Semester</h2>
+    </div>
+    <div style="background:var(--white); border-radius:14px; overflow:hidden; box-shadow:var(--shadow);">
+      <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+        <div style="padding:28px; border-right:1px solid rgba(0,0,0,0.06);">
+          <div style="font-family:'DM Mono'; font-size:10px; color:var(--teal); letter-spacing:.1em; text-transform:uppercase; margin-bottom:10px;">Units 1–3 · Early</div>
+          <h4 style="font-size:1rem; margin-bottom:10px;">Heavy Scaffold</h4>
+          <p style="font-size:13.5px; color:var(--mid); line-height:1.6;">Pre-drawn container outlines, full particle key provided, step-by-step procedure scaffolds, I Do + We Do worked examples, sentence starters for CER.</p>
         </div>
-    </footer>
+        <div style="padding:28px; border-right:1px solid rgba(0,0,0,0.06);">
+          <div style="font-family:'DM Mono'; font-size:10px; color:var(--amber); letter-spacing:.1em; text-transform:uppercase; margin-bottom:10px;">Units 4–7 · Mid</div>
+          <h4 style="font-size:1rem; margin-bottom:10px;">Fading Scaffold</h4>
+          <p style="font-size:13.5px; color:var(--mid); line-height:1.6;">Blank diagram boxes replace pre-drawn layouts. We Do tasks replace I Do. Data tables provided but analysis questions are open-ended. CER prompts fade.</p>
+        </div>
+        <div style="padding:28px;">
+          <div style="font-family:'DM Mono'; font-size:10px; color:var(--coral); letter-spacing:.1em; text-transform:uppercase; margin-bottom:10px;">Units 8–10 · Late</div>
+          <h4 style="font-size:1rem; margin-bottom:10px;">Independent</h4>
+          <p style="font-size:13.5px; color:var(--mid); line-height:1.6;">Students generate their own base layouts. You Do practice is the primary mode. CER tasks are unscaffolded. Error analysis replaces guided examples.</p>
+        </div>
+      </div>
+    </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Data
-            const rulesData = [
-                { title: 'Decorations', content: 'The university has strict rules to prevent wall damage. Students are not permitted to use nails, screws, duct tape, or other damaging adhesives. The officially recommended method for hanging items is white hanging putty. This makes removable adhesive strips and hooks an absolute necessity for any wall decor.' },
-                { title: 'Appliances', content: 'For fire safety, certain items are strictly prohibited, including halogen lamps, hot plates, toaster ovens, and space heaters. The university has a partnership for students to rent an approved "Microfridge" unit. If students choose to bring their own, they must adhere to strict size limitations: refrigerators cannot be larger than 3.6 cubic feet, and microwaves cannot exceed 0.7 cubic feet.' },
-                { title: 'In-Suite Bathrooms', content: 'The in-suite bathroom is a significant luxury, but it also transfers the responsibility of cleaning and stocking from the university to the residents. Suitemates must supply their own toilet paper, hand soap, and all necessary cleaning products.' }
-            ];
+    <!-- Triple E -->
+    <div class="section-header" style="margin-top:48px;">
+      <div class="eyebrow">Technology Audit</div>
+      <h2>The Triple E Framework</h2>
+      <p>Every digital tool in this course must earn its place by meeting at least one of three rigorous goals.</p>
+    </div>
+    <div class="triple-e">
+      <div class="e-card" style="border-top:4px solid #4361EE;">
+        <div class="e-label" style="color:#4361EE;">Goal 01 · Engagement</div>
+        <h3>Lower the Barrier</h3>
+        <p>Digital tools that chunk complex phenomena into accessible entry points — short video clips, collaborative digital DQBs — so all students can participate in the initial sense-making.</p>
+        <div style="margin-top:16px; font-size:12px; color:var(--light);">Example: Video clip anchoring the Unit 1 Phenomenon Launch</div>
+      </div>
+      <div class="e-card" style="border-top:4px solid var(--teal);">
+        <div class="e-label" style="color:var(--teal2);">Goal 02 · Enhancement</div>
+        <h3>Visualize the Invisible</h3>
+        <p>Simulations and sensors that make unobservable particle interactions directly visible — PhET simulations, digital temperature probes, live graphing software, 3D molecular rendering.</p>
+        <div style="margin-top:16px; font-size:12px; color:var(--light);">Example: PhET States of Matter (Unit 2), MolView 3D (Unit 5)</div>
+      </div>
+      <div class="e-card" style="border-top:4px solid var(--amber);">
+        <div class="e-label" style="color:#8B5E2E;">Goal 03 · Extension</div>
+        <h3>Bridge to the Real World</h3>
+        <p>Tools that connect classroom models to authentic applications — ocean acidification data, NASA visualizations, collaborative platforms like Padlet or Miro that link to real-world experts.</p>
+        <div style="margin-top:16px; font-size:12px; color:var(--light);">Example: NASA ocean salinity data (Unit 1 Elaborate)</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-            const shoppingData = [
-                {
-                    category: 'Bedding',
-                    item: 'Mattress Topper',
-                    topPick: { name: 'ViscoSoft Select High Density Topper', desc: 'Praised for its dense, supportive foam and gel-infusion for cooling, making the dorm bed comfortable for both sleeping and lounging.', link: 'https://www.google.com/search?q=ViscoSoft+Select+High+Density+Topper' },
-                    bestValue: { name: 'Linenspa Gel Memory Foam Topper', desc: 'An Amazon bestseller with tens of thousands of positive reviews, offering excellent comfort and cooling properties at an unbeatable price point.', link: 'https://www.google.com/search?q=Linenspa+3+Inch+Gel+Memory+Foam+Topper' },
-                    styleFocus: { name: 'Tempur-Pedic TEMPUR-Adapt Topper', desc: 'For the ultimate in luxury and pressure relief, this is the gold standard in memory foam, transforming a basic dorm mattress into a premium sleep surface.', link: 'https://www.google.com/search?q=Tempur-Pedic+TEMPUR-Adapt+Topper' }
-                },
-                {
-                    category: 'Bedding',
-                    item: 'Mattress Protector',
-                    topPick: { name: 'SafeRest Waterproof Protector', desc: 'A top-rated, vinyl-free protector that is breathable, noiseless, and effectively guards against spills, allergens, and dust mites.', link: 'https://www.google.com/search?q=SafeRest+Waterproof+Mattress+Protector' },
-                    bestValue: { name: 'Utopia Bedding Waterproof Protector', desc: 'Offers reliable waterproof protection and a soft, quilted surface at a great value, ensuring the mattress stays clean and fresh.', link: 'https://www.google.com/search?q=Utopia+Bedding+Waterproof+Mattress+Protector' },
-                    styleFocus: { name: 'Coop Home Goods Lulltra Protector', desc: 'Features a proprietary soft and breathable fabric that feels luxurious while providing silent, crinkle-free protection.', link: 'https://www.google.com/search?q=Coop+Home+Goods+Lulltra+Protector' }
-                },
-                {
-                    category: 'Bedding',
-                    item: 'Sleeping Pillows (Set of 2)',
-                    topPick: { name: 'Coop Sleep Goods Eden Pillow', desc: 'A fully adjustable shredded memory foam pillow that allows for a customized loft, making it perfect for any sleep position. Comes with extra fill.', link: 'https://www.google.com/search?q=Coop+Sleep+Goods+Eden+Pillow' },
-                    bestValue: { name: 'Beckham Hotel Collection Pillows', desc: 'An Amazon #1 bestseller, these gel-filled fiber pillows offer a plush, down-alternative feel that maintains its shape, all at an exceptional price.', link: 'https://www.google.com/search?q=Beckham+Hotel+Collection+Pillows' },
-                    styleFocus: { name: 'Casper Sleep Original Pillow', desc: 'Features an innovative pillow-in-pillow design that provides both soft comfort and firm support, ideal for those who want the best of both worlds.', link: 'https://www.google.com/search?q=Casper+Sleep+Original+Pillow' }
-                },
-                {
-                    category: 'Bedding',
-                    item: 'Twin XL Sheet Set',
-                    topPick: { name: 'Mellanni Microfiber Sheet Set', desc: 'With over 250,000 five-star ratings, these sheets are famously soft, durable, stain-resistant, and come in dozens of colors.', link: 'https://www.google.com/search?q=Mellanni+Microfiber+Sheet+Set+Twin+XL' },
-                    bestValue: { name: 'Utopia Bedding Microfiber Sheet Set', desc: 'A top value pick that launders well without wrinkling or shrinking, offering incredible quality and softness for a budget-friendly price.', link: 'https://www.google.com/search?q=Utopia+Bedding+Microfiber+Sheet+Set+Twin+XL' },
-                    styleFocus: { name: 'Brooklinen Classic Percale Sheets', desc: 'For those who sleep hot, these crisp, cool, hotel-style percale sheets are an investment in quality sleep. Made from 100% long-staple cotton.', link: 'https://www.google.com/search?q=Brooklinen+Classic+Percale+Sheets+Twin+XL' }
-                },
-                {
-                    category: 'Storage',
-                    item: 'Under-Bed Storage',
-                    topPick: { name: 'IRIS USA Weathertight Storage Box', desc: 'These tall, durable bins are perfect for the 31" clearance. They are stackable and have a weathertight seal to protect contents.', link: 'https://www.google.com/search?q=IRIS+USA+Weathertight+Storage+Box' },
-                    bestValue: { name: 'Sterilite ClearView Latch Box', desc: 'A classic, affordable solution. These clear bins allow for easy identification of contents and are a workhorse for dorm room storage.', link: 'https://www.google.com/search?q=Sterilite+66+Qt+ClearView+Latch+Box' },
-                    styleFocus: { name: 'Simple Houseware 3-Tier Rolling Cart', desc: 'A versatile cart that functions as a rolling pantry, school supply station, or beauty cart, offering easy access to items.', link: 'https://www.google.com/search?q=Simple+Houseware+3-Tier+Rolling+Cart' }
-                },
-                {
-                    category: 'Storage',
-                    item: 'Nightstand',
-                    topPick: { name: 'Furinno Just 3-Tier End Table', desc: 'A simple, compact, and extremely affordable nightstand that is consistently a top seller for small spaces like dorm rooms.', link: 'https://www.google.com/search?q=Furinno+Just+3-Tier+End+Table' },
-                    bestValue: { name: 'SONGMICS Nightstand with Fabric Drawer', desc: 'Offers both a hard top surface and a soft fabric drawer for concealed storage, providing great functionality for the price.', link: 'https://www.google.com/search?q=SONGMICS+Nightstand+with+Fabric+Drawer' },
-                    styleFocus: { name: 'Bedside Shelf for Bunk Beds', desc: 'A clamp-on shelf that attaches directly to the bed frame. The ultimate space-saver, perfect for holding a phone, drink, and book.', link: 'https://www.google.com/search?q=Bedside+Shelf+for+Bunk+Beds' }
-                },
-                {
-                    category: 'Storage',
-                    item: 'Velvet Hangers',
-                    topPick: { name: 'Amazon Basics Slim Velvet Hangers', desc: 'The go-to choice for maximizing closet space. Sturdy, with a 360-degree swivel hook, and a non-slip surface that is a game-changer.', link: 'https://www.google.com/search?q=Amazon+Basics+Slim+Velvet+Hangers' },
-                    bestValue: { name: 'SONGMICS Velvet Hangers', desc: 'Offers comparable quality and space-saving benefits to the Amazon Basics version, often at a slightly lower price point.', link: 'https://www.google.com/search?q=SONGMICS+Velvet+Hangers' },
-                    styleFocus: { name: 'Zober Premium Velvet Hangers w/ Clips', desc: 'These hangers include built-in clips, making them perfect for hanging skirts or coordinating outfits, adding another layer of organization.', link: 'https://www.google.com/search?q=Zober+Premium+Velvet+Hangers+with+Clips' }
-                },
-                {
-                    category: 'Storage',
-                    item: 'Over-the-Door Organizer',
-                    topPick: { name: 'SimpleHouseware Clear Organizer', desc: 'With 24 clear pockets, this is the most versatile option for storing shoes, toiletries, snacks, and cleaning supplies.', link: 'https://www.google.com/search?q=SimpleHouseware+24-Pocket+Clear+Over+The+Door+Hanging+Shoe+Organizer' },
-                    bestValue: { name: 'Amazon Basics 20-Pocket Organizer', desc: 'A no-frills, effective organizer that provides ample storage at a very low price.', link: 'https://www.google.com/search?q=Amazon+Basics+20-Pocket+Over-the-Door+Shoe+Organizer' },
-                    styleFocus: { name: 'Simple Houseware 12-Pair Shoe Rack', desc: 'For the true shoe lover, this sturdy metal rack holds shoes more securely than pocket organizers and offers a cleaner, more structured look.', link: 'https://www.google.com/search?q=Simple+Houseware+Over+the+Door+12-Pair+Shoe+Rack' }
-                },
-                {
-                    category: 'Decor',
-                    item: 'Fairy Lights',
-                    topPick: { name: 'Twinkle Star 100 LED Fairy Lights', desc: 'A bestseller with a warm white glow, remote control, and multiple modes (twinkle, steady, etc.). Perfect for creating a cozy ambiance.', link: 'https://www.google.com/search?q=Twinkle+Star+100+LED+Fairy+Lights+Warm+White' },
-                    bestValue: { name: 'Govee LED Strip Lights', desc: 'Offers more customization with RGB colors, app control, and music sync modes, all at a very competitive price point for smart lighting.', link: 'https://www.google.com/search?q=Govee+LED+Strip+Lights' },
-                    styleFocus: { name: 'Photo Clip String Lights', desc: 'Combine the warmth of fairy lights with a way to display photos. These lights have small clips for hanging pictures and mementos.', link: 'https://www.google.com/search?q=Photo+Clip+String+Lights' }
-                },
-                {
-                    category: 'Decor',
-                    item: 'Wall Tapestry',
-                    topPick: { name: 'Society6 Wall Tapestry', desc: 'Offers thousands of designs from independent artists, allowing for a truly unique and high-quality statement piece for any wall.', link: 'https://www.google.com/search?q=Society6+Wall+Tapestry' },
-                    bestValue: { name: 'Amazon Brand - Umi Wall Tapestry', desc: 'A huge variety of popular and trendy designs, from mandalas to landscapes, at a very affordable price point.', link: 'https://www.google.com/search?q=Amazon+Umi+Wall+Tapestry' },
-                    styleFocus: { name: 'Urban Outfitters Wall Tapestry', desc: 'Known for their curated, bohemian, and modern tapestries that set a specific aesthetic for the entire room.', link: 'https://www.google.com/search?q=Urban+Outfitters+Wall+Tapestry' }
-                },
-                {
-                    category: 'Decor',
-                    item: 'Photo Display',
-                    topPick: { name: 'Umbra Hangit Photo Display', desc: 'A stylish and versatile display with two wooden bars and five twine cords with clips, allowing for a creative, clothesline-style photo collage.', link: 'https://www.google.com/search?q=Umbra+Hangit+Photo+Display' },
-                    bestValue: { name: 'Photo Clip String Lights', desc: 'Combines the warmth of fairy lights with a way to display photos. These lights have small clips for hanging pictures and mementos.', link: 'https://www.google.com/search?q=Photo+Clip+String+Lights' },
-                    styleFocus: { name: 'Wire Wall Grid Panel', desc: 'A modern, industrial-style grid that can be used to clip photos, notes, and small shelves. Highly customizable and functional.', link: 'https://www.google.com/search?q=Wire+Wall+Grid+Panel+for+Photo+Display' }
-                },
-                 {
-                    category: 'Decor',
-                    item: 'Plants',
-                    topPick: { name: 'The Sill Potted Plants', desc: 'Offers a wide variety of live, easy-care plants like snake plants or pothos, delivered right to your door in stylish pots.', link: 'https://www.google.com/search?q=The+Sill+easy+care+plants' },
-                    bestValue: { name: 'IKEA FEJKA Artificial Potted Plants', desc: 'Famously realistic and affordable artificial plants that provide a touch of green with zero maintenance required.', link: 'https://www.google.com/search?q=IKEA+FEJKA+Artificial+Potted+Plants' },
-                    styleFocus: { name: 'Hanging Planters with Faux Plants', desc: 'Utilizes vertical space and adds a bohemian touch. Perfect for trailing plants like faux ivy or string of pearls.', link: 'https://www.google.com/search?q=Hanging+Planters+with+Faux+Plants' }
-                },
-                {
-                    category: 'Decor',
-                    item: 'Throw Blanket',
-                    topPick: { name: 'Barefoot Dreams CozyChic Throw', desc: 'The ultimate in softness and luxury. An investment piece known for its incredibly plush and cozy feel.', link: 'https://www.google.com/search?q=Barefoot+Dreams+CozyChic+Throw' },
-                    bestValue: { name: 'Bedsure Fleece Throw Blanket', desc: 'An Amazon bestseller with tens of thousands of ratings. Super soft, lightweight, and comes in a huge variety of colors at a great price.', link: 'https://www.google.com/search?q=Bedsure+Fleece+Throw+Blanket' },
-                    styleFocus: { name: 'Chunky Knit Throw Blanket', desc: 'Adds a trendy, oversized texture to the bed or a chair, creating a high-end, cozy look.', link: 'https://www.google.com/search?q=Chunky+Knit+Throw+Blanket' }
-                },
-                {
-                    category: 'Decor',
-                    item: 'Decorative Pillows',
-                    topPick: { name: 'MIULEE Corduroy Throw Pillow Covers', desc: 'These soft, wide-wale corduroy covers add a cozy, academic texture and come in a huge range of colors to match any style.', link: 'https://www.google.com/search?q=MIULEE+Corduroy+Throw+Pillow+Covers' },
-                    bestValue: { name: 'Phantoscope Velvet Throw Pillow Covers', desc: 'An inexpensive way to add a touch of luxe texture and a pop of color to the bed. Highly rated for softness and durability.', link: 'https://www.google.com/search?q=Phantoscope+Velvet+Throw+Pillow+Covers' },
-                    styleFocus: { name: 'Domvitus Textured Boucle Pillow Cover', desc: 'Taps into the hygge trend with its nubby, cozy boucle fabric, perfect for creating a warm and inviting layered look on the bed.', link: 'https://www.google.com/search?q=Domvitus+Textured+Boucle+Pillow+Cover' }
-                },
-                {
-                    category: 'Tech',
-                    item: 'Stick Vacuum',
-                    topPick: { name: 'Bissell Featherweight Stick Vacuum', desc: 'The quintessential dorm vacuum. Incredibly lightweight, converts to a handheld, and powerful enough for low-pile dorm carpets.', link: 'https://www.google.com/search?q=Bissell+Featherweight+Stick+Vacuum' },
-                    bestValue: { name: 'Dirt Devil Vibe 3-in-1 Stick Vacuum', desc: 'A strong competitor to the Bissell, offering similar lightweight performance and a convenient cord wrap at a very competitive price.', link: 'https://www.google.com/search?q=Dirt+Devil+Vibe+3-in-1+Stick+Vacuum' },
-                    styleFocus: { name: 'BLACK+DECKER Cordless Stick Vacuum', desc: 'The ultimate in convenience. Being cordless makes quick cleanups effortless, with no need to find a free outlet or wrangle a cord.', link: 'https://www.google.com/search?q=BLACK%2BDECKER+Powerseries+Cordless+Stick+Vacuum' }
-                },
-                 {
-                    category: 'Tech',
-                    item: 'Surge Protector',
-                    topPick: { name: 'Anker Power Strip Surge Protector', desc: 'A trusted brand in charging. This model features 12 outlets, 3 USB ports, and a flat plug design, providing maximum connectivity and safety.', link: 'https://www.google.com/search?q=Anker+Power+Strip+Surge+Protector+12+outlets' },
-                    bestValue: { name: 'Amazon Basics 8-Outlet Protector', desc: 'A reliable and affordable surge protector with a long cord that offers plenty of outlets for a standard dorm room setup.', link: 'https://www.google.com/search?q=Amazon+Basics+8-Outlet+Power+Strip+Surge+Protector' },
-                    styleFocus: { name: 'Belkin Rotating Plug Protector', desc: 'Features rotating outlets that can accommodate bulky power bricks without blocking adjacent plugs, a common dorm room problem.', link: 'https://www.google.com/search?q=Belkin+Rotating+Plug+Surge+Protector' }
-                },
-                {
-                    category: 'Tech',
-                    item: 'Desk Lamp',
-                    topPick: { name: 'Lepro LED Desk Lamp', desc: 'A sleek, modern lamp with multiple brightness levels, color modes, and a built-in USB charging port. Excellent task lighting.', link: 'https://www.google.com/search?q=Lepro+LED+Desk+Lamp+with+USB' },
-                    bestValue: { name: 'Simple Designs Basic Metal Lamp', desc: 'A classic, no-frills desk lamp that provides good light at an unbeatable price. A simple and effective solution.', link: 'https://www.google.com/search?q=Simple+Designs+Basic+Metal+Desk+Lamp' },
-                    styleFocus: { name: 'Newhouse Lighting Clamp Lamp', desc: 'This lamp clamps onto the side of the desk or a shelf, freeing up 100% of the desk surface. Perfect for maximizing a small workspace.', link: 'https://www.google.com/search?q=Newhouse+Lighting+Clamp+Lamp' }
-                }
-            ];
+<!-- ════════════════════════════ PAGE: STANDARDS ════ -->
+<div class="page" id="page-standards">
+  <div class="section">
+    <div class="section-header">
+      <div class="eyebrow">PA STEELS Standards</div>
+      <h2>Standards Coverage Map</h2>
+      <p>All PA STEELS Physical Science standards for chemistry addressed across the 10-unit storyline.</p>
+    </div>
+    <table class="std-table">
+      <thead><tr>
+        <th>Standard Code</th>
+        <th>Description</th>
+        <th>Units Addressed</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="std-code">3.2.9-12.A</span></td>
+          <td><strong>Structure and Properties of Matter</strong><br><span style="color:var(--mid);font-size:13px;">Periodic patterns, electron states, atomic structure and observable bulk properties.</span></td>
+          <td><div class="std-dots" id="std-a"></div></td>
+        </tr>
+        <tr>
+          <td><span class="std-code">3.2.9-12.B</span></td>
+          <td><strong>Electrical Forces and Bulk Structure</strong><br><span style="color:var(--mid);font-size:13px;">Electrical interactions between particles; how bonding determines structural properties.</span></td>
+          <td><div class="std-dots" id="std-b"></div></td>
+        </tr>
+        <tr>
+          <td><span class="std-code">3.2.9-12.C</span></td>
+          <td><strong>Outcomes of Chemical Reactions</strong><br><span style="color:var(--mid);font-size:13px;">Conservation, energy changes, reaction types, and quantitative prediction.</span></td>
+          <td><div class="std-dots" id="std-c"></div></td>
+        </tr>
+        <tr>
+          <td><span class="std-code">3.2.9-12.G</span></td>
+          <td><strong>Mass Conservation and Mathematical Models</strong><br><span style="color:var(--mid);font-size:13px;">Balancing equations, stoichiometric ratios, mole concept as a mathematical bridge.</span></td>
+          <td><div class="std-dots" id="std-g"></div></td>
+        </tr>
+        <tr>
+          <td><span class="std-code">3.2.9-12.N</span></td>
+          <td><strong>Solutions and Concentration</strong><br><span style="color:var(--mid);font-size:13px;">Solute-solvent interactions, molarity, dilution, and colligative properties.</span></td>
+          <td><div class="std-dots" id="std-n"></div></td>
+        </tr>
+        <tr>
+          <td><span class="std-code">3.2.9-12.O</span></td>
+          <td><strong>Energy and Thermochemistry</strong><br><span style="color:var(--mid);font-size:13px;">Heat, temperature, phase changes, heating/cooling curves, energy transfer.</span></td>
+          <td><div class="std-dots" id="std-o"></div></td>
+        </tr>
+        <tr>
+          <td><span class="std-code">3.2.9-12.P</span></td>
+          <td><strong>Kinetic Molecular Theory</strong><br><span style="color:var(--mid);font-size:13px;">Particle motion, gas behavior, pressure, diffusion, and compressibility.</span></td>
+          <td><div class="std-dots" id="std-p"></div></td>
+        </tr>
+        <tr>
+          <td><span class="std-code">3.2.9-12.R</span></td>
+          <td><strong>Reaction Dynamics and Equilibrium</strong><br><span style="color:var(--mid);font-size:13px;">Collision theory, reaction rates, Le Chatelier's principle, and dynamic balance.</span></td>
+          <td><div class="std-dots" id="std-r"></div></td>
+        </tr>
+        <tr>
+          <td><span class="std-code">3.2.9-12.V</span></td>
+          <td><strong>Wave / Particle Models and Light</strong><br><span style="color:var(--mid);font-size:13px;">Electromagnetic spectrum, wavelength/frequency, electron transitions, line spectra.</span></td>
+          <td><div class="std-dots" id="std-v"></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-            const checklistData = [
-                'Twin XL Mattress Topper', 'Waterproof Mattress Protector', 'Sleeping Pillows (2)', 'Twin XL Sheet Sets (2)', 'Twin XL Comforter', 'Headboard',
-                'Under-Bed Storage Bins', 'Nightstand', 'Slim Velvet Hangers', 'Hanging Organizer', 'Shoe Rack', 'Over-the-Door Organizer', 'Desk Organizer', 'Over-the-Fridge Caddy',
-                'Mesh Shower Caddy', 'Bath Towels (2 sets)', 'Hand Towels (2 sets)', 'Shower Curtain & Liner', 'Bath Mat', 'Laundry Hamper', 'Detergent',
-                'Compact Stick Vacuum', 'Cleaning Supplies', 'Trash Can & Liners', 'Laptop & Charger', 'Surge Protector', 'LED Desk Lamp', 'Backpack',
-                'School Supplies', 'Mini-Fridge', 'Microwave', 'Reusable Water Bottle', 'Plates & Silverware', 'Coffee Maker', 'Area Rug',
-                'Wall Tapestry', 'Photo Display', 'Plants', 'Throw Blanket', 'Decorative Pillows', 'Fairy Lights', 'Removable Hooks/Putty', 'Full-Length Mirror', 'Fan', 'First-Aid Kit', 'Umbrella'
-            ];
+<!-- ════════════════════════════ UNIT PAGES (1–10) ════ -->
+<div id="unitPagesContainer"></div>
 
-            const gdocTemplate = `
-Our WCU Dorm Room Plan! - Autumn & Jess
-=====================================
+</main>
 
-Welcome, roomie! Use this doc to plan our amazing Allegheny Hall suite. Let's figure out who is bringing what for the shared spaces and keep track of our own stuff.
+<footer>
+  <div class="f-logo">PhenomenaChem</div>
+  <p>PA STEELS-Aligned · 90-Day Semester · AMTA Modeling Norms · CLT-Designed · Triple E Technology</p>
+</footer>
+</div>
 
----
-SHARED SPACES & APPLIANCES
----
-(Decide on these together to avoid duplicates!)
+<script>
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const UNIT_COLORS = [
+  '#4361EE','#2DC653','#F9C74F','#F8961E','#E63946',
+  '#9B5DE5','#00B4D8','#3A86FF','#FB5607','#8AC926'
+];
 
-- Area Rug:
-  - Who's Bringing It: 
-  - Notes/Link: 
+const FIVE_E_COLORS = {
+  'Engage':'#4361EE', 'Explore':'#2DC653',
+  'Explain':'#dba609', 'Elaborate':'#F8961E', 'Evaluate':'#E63946'
+};
 
-- Futon or Small Couch:
-  - Who's Bringing It: 
-  - Notes/Link: 
+const units = [
+  {
+    num:1, title:"The Story of Trustworthy Evidence",
+    bigIdea:"Scientific measurement and experimental design allow us to make sense of the physical world.",
+    essQ:"How do scientists ensure accuracy and precision in measurements?",
+    phenomenon:"The Surprising Candle & Glycerin Bubbles",
+    phenIcon:"🕯️",
+    dq:"How can chemists build trustworthy explanations when observations are surprising and measurements can vary?",
+    uq:"Students observe the candle, recording sensory details and generating questions for the Driving Question Board (DQB).",
+    fiveE:[
+      {phase:'Engage',   desc:'Phenomenon launch and initial particle-level models'},
+      {phase:'Explore',  desc:'Precision Station Lab & Mass-Volume Density Lab'},
+      {phase:'Explain',  desc:'Formalizing measurements, dimensional analysis, and sig figs'},
+      {phase:'Elaborate',desc:'Designing controlled investigations'},
+      {phase:'Evaluate', desc:'Synthesis CER answering the Driving Question'},
+    ],
+    standards:['3.2.9-12.A','3.2.9-12.B','3.2.9-12.C'],
+    days:[
+      {day:1, goal:"Distinguish observations from inferences", arch:"Review evidence → Model 'Understand & Question' → Initial sketches → Exit Ticket", tripleE:"Engagement: Collaborative digital DQB"},
+      {day:2, goal:"Use lab equipment correctly", arch:"Recall tool use → Explicit tool modeling → Tool stations → Exit Ticket"},
+      {day:3, goal:"Identify measured vs. exact values", arch:"Count vs. measure → Model uncertainty → Card sort → Exit Ticket"},
+      {day:4, goal:"Record measurements with correct precision", arch:"Review digits → Model meniscus reading → Precision Station Lab with Faded Scaffolding → Exit Ticket"},
+      {day:5, goal:"Calculate density using particle ideas", arch:"Mass vs volume → Model density packing → AMTA whiteboarding → Exit Ticket"},
+      {day:6, goal:"Interpret a mass-volume graph", arch:"Predict graph patterns → Mass-Volume Density Lab → Board Meetings → Exit Ticket"},
+      {day:7, goal:"Use dimensional analysis", arch:"Metric prefixes → AMTA translation format → Practice with Faded Scaffolding → Exit Ticket"},
+      {day:8, goal:"Apply significant figure rules", arch:"Review precision → Zero rules → Error analysis tasks → Exit Ticket"},
+      {day:9, goal:"Evaluate data with percent error", arch:"Accuracy vs precision → Model calculation → Analyze data quality → Exit Ticket"},
+      {day:10, goal:"Design a controlled investigation", arch:"Fair comparisons → Identify variables → Scaffolded design template → Exit Ticket"},
+      {day:11, goal:"Justify the best data display", arch:"Misleading graphs → Model graph choice → Critique flawed displays → Exit Ticket"},
+      {day:12, goal:"Unit Synthesis CER", arch:"Review routines → Model CER structure → Draft final synthesis → Exit Ticket"},
+    ]
+  },
+  {
+    num:2, title:"Energy and States of Matter",
+    bigIdea:"Energy affects the motion of particles and determines states of matter.",
+    essQ:"How does energy affect the motion and arrangement of particles?",
+    phenomenon:"The Whoosh Bottle & Sweating",
+    phenIcon:"🔥",
+    dq:"Why does a liquid 'whoosh' and why does sweat cool you down?",
+    uq:"Students use pre-drawn flask outlines and zoom-in circles to model liquid disappearing at the particle level.",
+    fiveE:[
+      {phase:'Engage',   desc:'Whoosh Bottle launch and initial particle models'},
+      {phase:'Explore',  desc:'Energy Mixing Lab & Heating Curves Lab'},
+      {phase:'Explain',  desc:'Heat vs. Temperature, Kinetic Energy formalization'},
+      {phase:'Elaborate',desc:'Evaporative cooling, matter classification, conservation'},
+      {phase:'Evaluate', desc:'Synthesis CER answering the Driving Question'},
+    ],
+    standards:['3.2.9-12.O','3.2.9-12.P'],
+    days:[
+      {day:13, goal:"Describe states using particle motion", arch:"Review KMT → Model 'Understand & Question' → Unobservable to Observable drawings → Exit Ticket", tripleE:"Enhancement: PhET States of Matter simulation"},
+      {day:14, goal:"Explain temperature as average kinetic energy", arch:"Recall states → Model whiskers/arrows for speed → Whiteboard particle models → Exit Ticket"},
+      {day:15, goal:"Distinguish heat from temperature", arch:"Review KE → Integrated format scenarios → Turn-and-talk → Exit Ticket"},
+      {day:16, goal:"Explain thermal equilibrium", arch:"Energy flow → Energy Mixing Lab → Closed system models → Exit Ticket"},
+      {day:17, goal:"Model phase changes as energy transfer", arch:"Review equilibrium → Zoom-in circles breaking attractions → AMTA whiteboards → Exit Ticket"},
+      {day:18, goal:"Interpret heating/cooling curves", arch:"Predict plateaus → Heating Curve Lab with Faded Scaffolding → Exit Ticket", tripleE:"Enhancement: Digital temperature probes for real-time graphing"},
+      {day:19, goal:"Classify matter", arch:"Macroscopic vs microscopic → Card sort → Packet practice → Exit Ticket"},
+      {day:20, goal:"Distinguish physical vs chemical changes", arch:"Review classification → Evidence-based scenarios → Whiteboard checks → Exit Ticket"},
+      {day:21, goal:"Apply conservation of matter", arch:"Mass in closed systems → Faded scaffolding before/after drawings → Exit Ticket"},
+      {day:22, goal:"Explain evaporative cooling", arch:"Review phase change → Elaborate on sweating phenomenon → Revise models → Exit Ticket"},
+      {day:23, goal:"Revise explanatory models", arch:"Review DQB → Board Meeting for consensus → Update Summary Table → Exit Ticket"},
+      {day:24, goal:"Unit Synthesis CER", arch:"Prep evidence → Draft CER → Final phenomenon application → Exit Ticket"},
+    ]
+  },
+  {
+    num:3, title:"The Particulate Nature of Matter",
+    bigIdea:"Particle arrangement explains macroscopic behavior.",
+    essQ:"How can a particle model explain what we observe?",
+    phenomenon:"Inverted Balloon in a Flask & Dry Ice",
+    phenIcon:"🎈",
+    dq:"How do invisible particles explain pressure, diffusion, and compression?",
+    uq:"Students sketch collision mechanisms using Unobservable to Observable particle models with zoom-in circles.",
+    fiveE:[
+      {phase:'Engage',   desc:'Mystery Flask launch and initial collision models'},
+      {phase:'Explore',  desc:'Syringe Compressibility & Diffusion Labs'},
+      {phase:'Explain',  desc:'Kinetic Molecular Theory (KMT) formalization'},
+      {phase:'Elaborate',desc:'Density puzzles & aerosol applications'},
+      {phase:'Evaluate', desc:'Synthesis CER answering the Driving Question'},
+    ],
+    standards:['3.2.9-12.P','3.2.9-12.B'],
+    days:[
+      {day:25, goal:"Explain matter is made of particles", arch:"'Understand & Question' Launch → DQB creation → Initial models → Exit Ticket"},
+      {day:26, goal:"Draw particle diagrams for states", arch:"Review particles → Model KMT states → AMTA Whiteboarding → Exit Ticket", tripleE:"Extension: PhET Gas Properties for dynamic variable manipulation"},
+      {day:27, goal:"Use KMT to explain gas pressure", arch:"Review states → Model pressure as collisions → Unobservable to Observable sketches → Exit Ticket"},
+      {day:28, goal:"Explain why gases are compressible", arch:"Predict spacing → Syringe Investigation Lab → Board meetings → Exit Ticket"},
+      {day:29, goal:"Predict temperature effects on gases", arch:"Review KMT → Integrated format text/diagrams → Independent practice → Exit Ticket"},
+      {day:30, goal:"Explain diffusion as random motion", arch:"Introduce scent/dye → Diffusion Lab → Sequence mapping → Exit Ticket"},
+      {day:31, goal:"Explain phase changes using KMT", arch:"Review energy → Model sublimation → Faded Scaffolding diagrams → Exit Ticket"},
+      {day:32, goal:"Use spacing to explain density", arch:"Review mass/vol → Floating wood puzzle → Density boxes → Exit Ticket"},
+      {day:33, goal:"Revise a particle model", arch:"Review labs → Board Meeting consensus → Update DQB → Exit Ticket"},
+      {day:34, goal:"Analyze unfamiliar phenomena", arch:"Intro aerosol spray → Apply KMT rules → Peer critique → Exit Ticket"},
+      {day:35, goal:"Unit Synthesis CER", arch:"Review evidence → Draft final argument → Exit Ticket"},
+    ]
+  },
+  {
+    num:4, title:"Particles with Internal Structure",
+    bigIdea:"Internal electron arrangement determines properties and light emission.",
+    essQ:"How do internal components produce predictable patterns?",
+    phenomenon:"Flame Tests",
+    phenIcon:"🔴🟢🟡",
+    dq:"What is happening inside the atom to produce light and periodicity?",
+    uq:"Students observe colored fire and sketch how internal atomic structures cause macroscopic light emission.",
+    fiveE:[
+      {phase:'Engage',   desc:'Flame Tests launch and initial atomic models'},
+      {phase:'Explore',  desc:'Spectroscopy Lab & Periodic Trends Graphing'},
+      {phase:'Explain',  desc:'Bohr models and electron configurations'},
+      {phase:'Elaborate',desc:'Predicting mystery elements using trends'},
+      {phase:'Evaluate', desc:'Synthesis CER answering the Driving Question'},
+    ],
+    standards:['3.2.9-12.A','3.2.9-12.V'],
+    days:[
+      {day:36, goal:"Explain the mole and subatomic particles", arch:"'Understand & Question' Flame tests → Model protons/neutrons/electrons → Initial models → Exit Ticket"},
+      {day:37, goal:"Use atomic/mass numbers for isotopes", arch:"Review particles → Model isotope notation → Atom Builder whiteboards → Exit Ticket"},
+      {day:38, goal:"Calculate average atomic mass", arch:"Review isotopes → Worked examples with Faded Scaffolding → Practice → Exit Ticket"},
+      {day:39, goal:"Explain changing atomic models", arch:"History of atom → Model evolution card sort → Group timeline → Exit Ticket"},
+      {day:40, goal:"Use Bohr model for energy levels", arch:"Review models → Unobservable to Observable electron jumps → Zoom-in circles → Exit Ticket"},
+      {day:41, goal:"Relate wavelength and frequency", arch:"Intro light → Integrated format EM spectrum math → Calculations → Exit Ticket"},
+      {day:42, goal:"Connect line spectra to electron transitions", arch:"Review energy → Spectroscopy Station Lab → Board Meetings → Exit Ticket"},
+      {day:43, goal:"Distinguish ground/excited states", arch:"Review lab → Draw state transitions → Whiteboard checks → Exit Ticket"},
+      {day:44, goal:"Write electron configurations", arch:"Intro orbitals → I Do/We Do configurations → Faded practice → Exit Ticket"},
+      {day:45, goal:"Write configurations for ions", arch:"Review neutral atoms → Error analysis for charged atoms → Practice → Exit Ticket"},
+      {day:46, goal:"Use periodic trends to predict properties", arch:"Intro table → Trends Graphing Lab → Discover patterns → Exit Ticket", tripleE:"Enhancement: Interactive digital periodic table (ptable.com) heat-map visualization"},
+      {day:47, goal:"Unit Synthesis CER", arch:"DQB review → Write Flame Test CER → Exit Ticket"},
+    ]
+  },
+  {
+    num:5, title:"Bonding and Molecular Structure",
+    bigIdea:"Chemical/physical properties are determined by bond types and structures.",
+    essQ:"How does electron arrangement dictate molecular geometry and properties?",
+    phenomenon:"Water Beading & Conductive Metals",
+    phenIcon:"💧",
+    dq:"Why do some substances stick together while others conduct electricity?",
+    uq:"Students observe beading/spreading and draw Unobservable to Observable sketches of invisible intermolecular stickiness.",
+    fiveE:[
+      {phase:'Engage',   desc:'Beading/Conductivity launch and initial bonding models'},
+      {phase:'Explore',  desc:'Conductivity Lab & Surface Tension Lab'},
+      {phase:'Explain',  desc:'Lewis structures, VSEPR, and IMFs'},
+      {phase:'Elaborate',desc:'Solubility (Like Dissolves Like)'},
+      {phase:'Evaluate', desc:'Synthesis CER answering the Driving Question'},
+    ],
+    standards:['3.2.9-12.B','3.2.9-12.A'],
+    days:[
+      {day:48, goal:"Predict bonding using periodic info", arch:"'Understand & Question' Launch → Predict bonds → Initial models → Exit Ticket"},
+      {day:49, goal:"Predict bond types using electronegativity", arch:"Review intro → Model EN differences → Bond category sort → Exit Ticket"},
+      {day:50, goal:"Compare conductivity of bond types", arch:"Predict behavior → Conductivity Lab → Data table integration → Exit Ticket"},
+      {day:51, goal:"Model ionic bonding as electron transfer", arch:"Review conductivity → AMTA lattice sketches → Unobservable to Observable transfer → Exit Ticket"},
+      {day:52, goal:"Model covalent bonding as electron sharing", arch:"Intro Lewis → Worked examples with Faded Scaffolding → Practice → Exit Ticket"},
+      {day:53, goal:"Explain surface tension and boiling", arch:"Predict stickiness → Surface Tension Lab → Connect to particle attractions → Exit Ticket"},
+      {day:54, goal:"Use VSEPR to predict shapes", arch:"Review Lewis → Integrated VSEPR charts → Whiteboard 3D shapes → Exit Ticket", tripleE:"Enhancement: MolView 3D rendering to visualize geometry"},
+      {day:55, goal:"Determine molecular polarity", arch:"Review shapes → Turn-and-talk on symmetry → Draw dipole moments → Exit Ticket"},
+      {day:56, goal:"Compare types of IMFs", arch:"Review polarity → Match forces to boiling points Card Sort → Exit Ticket"},
+      {day:57, goal:"Predict boiling point trends", arch:"Review IMFs → Error analysis of flawed graphs → Packet practice → Exit Ticket"},
+      {day:58, goal:"Predict solubility and material function", arch:"Like dissolves like → Elaborate on material design → Revise models → Exit Ticket"},
+      {day:59, goal:"Unit Synthesis CER", arch:"Review DQB → Draft synthesis → Exit Ticket"},
+    ]
+  },
+  {
+    num:6, title:"Chemical Reactions",
+    bigIdea:"Atoms are conserved and rearrange to form new substances.",
+    essQ:"Where do atoms go when a substance disappears?",
+    phenomenon:"Elephant Toothpaste & Disappearing Candle",
+    phenIcon:"🦷",
+    dq:"Where do atoms go when a substance seems to transform into something massive?",
+    uq:"Students sketch 'Before' and 'After' Unobservable to Observable atom arrangements to explain conservation.",
+    fiveE:[
+      {phase:'Engage',   desc:'Elephant Toothpaste launch and initial atom models'},
+      {phase:'Explore',  desc:'Reaction Types Lab & Closed System Lab'},
+      {phase:'Explain',  desc:'Balancing equations and Conservation of Mass'},
+      {phase:'Elaborate',desc:'Redox reactions and Activity Series'},
+      {phase:'Evaluate', desc:'Synthesis CER answering the Driving Question'},
+    ],
+    standards:['3.2.9-12.C','3.2.9-12.G'],
+    days:[
+      {day:60, goal:"Identify evidence of chemical change", arch:"'Understand & Question' → Base pictorial layouts → DQB → Exit Ticket"},
+      {day:61, goal:"Translate words into chemical statements", arch:"Review changes → Model bond breaking → Equation sorting → Exit Ticket"},
+      {day:62, goal:"Use particle diagrams to show conservation", arch:"Intro conservation → AMTA Before/During/After sketches → Exit Ticket"},
+      {day:63, goal:"Identify patterns in reaction types", arch:"Predict products → Reaction Types Lab → Data collection → Exit Ticket"},
+      {day:64, goal:"Balance chemical equations", arch:"Review mass → Explicit 'I Do' coefficients with Faded Scaffolding → Exit Ticket", tripleE:"Extension: PhET Balancing simulation for real-time visual feedback"},
+      {day:65, goal:"Prove conservation of mass", arch:"Open vs Closed → Closed System Mass Lab → Calculate gas escape → Exit Ticket"},
+      {day:66, goal:"Classify reactions by pattern", arch:"Review types → Categorize synthesis/decomp → Card sort → Exit Ticket"},
+      {day:67, goal:"Predict products for familiar patterns", arch:"Review classifications → Use valence states to predict → Whiteboards → Exit Ticket"},
+      {day:68, goal:"Model Redox as electron transfer", arch:"Intro electron flow → Zoom-in circles showing transfer → Exit Ticket"},
+      {day:69, goal:"Use activity series to predict reactivity", arch:"Review single replacement → Error analysis of weak predictions → Exit Ticket"},
+      {day:70, goal:"Revise the explanatory model", arch:"Review candle/foam → Board meeting consensus → Update DQB → Exit Ticket"},
+      {day:71, goal:"Unit Synthesis CER", arch:"Prep evidence → Draft final argument → Exit Ticket"},
+    ]
+  },
+  {
+    num:7, title:"Counting Particles Too Small to See",
+    bigIdea:"Chemists bridge the unobservable (atoms) to the observable (grams) using the mole.",
+    essQ:"How can we predict exactly how much product a reaction makes?",
+    phenomenon:"The Recipe Fail",
+    phenIcon:"🍳",
+    dq:"How do we use mathematical models to ensure we never run out of reactants?",
+    uq:"Students observe a macroscopic failure and model how counting by weighing solves the problem.",
+    fiveE:[
+      {phase:'Engage',   desc:'Recipe Fail launch and initial counting models'},
+      {phase:'Explore',  desc:'Counting by Weighing Lab & Stoichiometry Challenge Lab'},
+      {phase:'Explain',  desc:'Molar mass, Avogadro\'s number, mole ratios'},
+      {phase:'Elaborate',desc:'Limiting reactants and percent yield'},
+      {phase:'Evaluate', desc:'Synthesis CER answering the Driving Question'},
+    ],
+    standards:['3.2.9-12.G','3.2.9-12.C'],
+    days:[
+      {day:72, goal:"Explain the need for counting by weighing", arch:"'Understand & Question' → Pre-drawn ingredient outlines → DQB → Exit Ticket"},
+      {day:73, goal:"Use average mass as a bridge", arch:"Review recipe → Counting by Weighing Lab → Consensus bridge → Exit Ticket"},
+      {day:74, goal:"Calculate molar mass from formulas", arch:"Intro periodic mass → Integrated formats → Practice → Exit Ticket"},
+      {day:75, goal:"Use Avogadro's number in conversions", arch:"Intro the Mole → Collaborative whiteboard conversions → Exit Ticket"},
+      {day:76, goal:"Determine empirical formulas", arch:"Review ratios → Worked examples with Faded Scaffolding → Exit Ticket"},
+      {day:77, goal:"Predict product mass using mole ratios", arch:"Predict yield → Stoichiometry Challenge Lab → Data collection → Exit Ticket"},
+      {day:78, goal:"Perform multi-step stoichiometry", arch:"Review lab → AMTA Before/During/After particle sketches → Exit Ticket", tripleE:"Enhancement: Collaborative digital whiteboards (Miro) for AMTA diagramming"},
+      {day:79, goal:"Identify the limiting reactant", arch:"Sandwich analogy → Apply to chemical equations → Packet practice → Exit Ticket"},
+      {day:80, goal:"Calculate percent yield", arch:"Review Stoich lab → Error analysis of wrong molar mass → Calculate yield → Exit Ticket"},
+      {day:81, goal:"Revise explanatory models", arch:"Review Recipe Fail → Board meeting → Update DQB → Exit Ticket"},
+      {day:82, goal:"Unit Synthesis CER", arch:"Compile evidence → Draft final argument → Exit Ticket"},
+    ]
+  },
+  {
+    num:8, title:"Reaction Dynamics",
+    bigIdea:"Reactions depend on collision energy; systems reach dynamic balance.",
+    essQ:"How do we control the speed and direction of reactions?",
+    phenomenon:"Ocean Acidification & Coral Bleaching",
+    phenIcon:"🪸",
+    dq:"How do human activities shift the balance of Earth's systems?",
+    uq:"Students observe pH changes and use Unobservable to Observable collision models with zoom-in circles.",
+    fiveE:[
+      {phase:'Engage',   desc:'Ocean Acidification launch and initial equilibrium models'},
+      {phase:'Explore',  desc:'Iodine Clock Lab & Equilibrium Stations'},
+      {phase:'Explain',  desc:'Collision Theory, Le Chatelier\'s Principle'},
+      {phase:'Elaborate',desc:'Industrial & biological system applications'},
+      {phase:'Evaluate', desc:'Synthesis CER answering the Driving Question'},
+    ],
+    standards:['3.2.9-12.R','3.2.9-12.C'],
+    badge:'Honors/Flex',
+    days:[
+      {day:83, goal:"Identify factors that shift a system's balance", arch:"'Understand & Question' → Zoom-in circles for ocean interface → Exit Ticket"},
+      {day:84, goal:"Explain Collision Theory", arch:"Intro kinetics → Model collision speed (whiskers) → Whiteboards → Exit Ticket"},
+      {day:85, goal:"Compare reaction rates using lab evidence", arch:"Predict rates → Iodine Clock Lab → Graph data → Exit Ticket", tripleE:"Engagement: Smartphone video analysis to track precise color change timing"},
+      {day:86, goal:"Predict shifts using Le Chatelier's Principle", arch:"Intro equilibrium → Equilibrium Stations Lab → Specify condition changes → Exit Ticket"},
+      {day:87, goal:"Unit Synthesis CER", arch:"Revise Ocean models → Draft final argument → Exit Ticket"},
+    ]
+  },
+  {
+    num:9, title:"Acid-Base Chemistry",
+    bigIdea:"Hydronium concentration determines properties; acids/bases transfer protons.",
+    essQ:"How do systems maintain stability when 'stressed'?",
+    phenomenon:"Corroding Limestone Monument",
+    phenIcon:"🏛️",
+    dq:"Why does acid rain dissolve limestone, and how do biological buffers prevent this?",
+    uq:"Students sketch Zoom-in Circles showing the Unobservable to Observable transfer of protons.",
+    fiveE:[
+      {phase:'Engage',   desc:'Limestone Monument launch and initial proton models'},
+      {phase:'Explore',  desc:'Acid Strength Lab & Titration Challenge Lab'},
+      {phase:'Explain',  desc:'pH/pOH, conjugate pairs, Brønsted-Lowry theory'},
+      {phase:'Elaborate',desc:'Biological buffers and acid rain systems'},
+      {phase:'Evaluate', desc:'Synthesis CER answering the Driving Question'},
+    ],
+    standards:['3.2.9-12.R','3.2.9-12.O'],
+    badge:'Honors/Flex',
+    days:[
+      {day:88, goal:"Define acids/bases via Brønsted-Lowry", arch:"'Understand & Question' → Initial monument models → Exit Ticket"},
+      {day:89, goal:"Distinguish strong vs. weak acids", arch:"Review conductivity → Acid Strength Lab → Record data → Exit Ticket"},
+      {day:90, goal:"Calculate pH and pOH", arch:"Intro log scale → Integrated format math next to ion counts → Faded Scaffolding practice → Exit Ticket"},
+      {day:91, goal:"Analyze titration data", arch:"Intro neutralization → Titration Challenge Lab → Board meetings → Exit Ticket", tripleE:"Enhancement: Digital pH sensors and live-graphing software for equivalence points"},
+      {day:92, goal:"Identify conjugate acid-base pairs", arch:"Review titration → AMTA Before/After sketches of proton transfer → Exit Ticket"},
+      {day:93, goal:"Explain how buffers resist change", arch:"Intro stability → Model blood pH → Zoom-in shifts → Exit Ticket"},
+      {day:94, goal:"Unit Synthesis CER", arch:"DQB review → Final argument linking protons to monument damage → Exit Ticket"},
+    ]
+  },
+  {
+    num:10, title:"Solutions and Concentration",
+    bigIdea:"Solute-solvent interactions determine solubility.",
+    essQ:"How do particle interactions change liquid behavior?",
+    phenomenon:"The Emulsion Mystery (Oil, Water, Soap)",
+    phenIcon:"🧴",
+    dq:"How do we get substances that 'hate' each other to mix?",
+    uq:"Students use pre-drawn beakers to sketch the dual nature of soap particles — hydrophilic and hydrophobic ends.",
+    fiveE:[
+      {phase:'Engage',   desc:'Emulsion Mystery launch and initial soap particle models'},
+      {phase:'Explore',  desc:'Solubility Lab & Colligative Effects Lab'},
+      {phase:'Explain',  desc:'Molarity, dilution, IMF-based solubility'},
+      {phase:'Elaborate',desc:'Precipitation reactions and solubility rules'},
+      {phase:'Evaluate', desc:'Synthesis CER answering the Driving Question'},
+    ],
+    standards:['3.2.9-12.N','3.2.9-12.B'],
+    badge:'Honors/Flex',
+    days:[
+      {day:95, goal:"Explain dissolving as particle interactions", arch:"'Understand & Question' → Unobservable to Observable oil-water interface sketches → Exit Ticket"},
+      {day:96, goal:"Interpret solubility curves", arch:"Predict limits → Solubility/Temperature Lab → Graphing → Exit Ticket"},
+      {day:97, goal:"Calculate molarity", arch:"Intro concentration → Worked examples → Mini-whiteboards → Exit Ticket"},
+      {day:98, goal:"Solve dilution problems", arch:"Review molarity → Step-by-step formulas with Faded Scaffolding → Exit Ticket"},
+      {day:99, goal:"Explain colligative properties", arch:"Predict freezing → Ice Cream Colligative Lab → Board Meeting → Exit Ticket", tripleE:"Extension: Beyond Labz virtual simulation to test multiple colligative variables"},
+      {day:100, goal:"Predict precipitation with particle models", arch:"Review solubility rules → AMTA Before/During/After ion sketches → Exit Ticket"},
+      {day:101, goal:"Revise the explanatory model", arch:"Review Emulsion → Add dual-nature particles to Day 95 model → Exit Ticket"},
+      {day:102, goal:"Unit Synthesis CER + Semester Wrap-Up", arch:"DQB review → Write final argument explaining designed mixtures → Semester wrap-up"},
+    ]
+  }
+];
 
-- Coffee Table:
-  - Who's Bringing It: 
-  - Notes/Link: 
+// Standards coverage
+const STD_COVERAGE = {
+  'std-a': [1,4],  'std-b': [2,5],  'std-c': [6,9],
+  'std-g': [6,7],  'std-n': [2,3,4,5,10], 'std-o': [2,8,9],
+  'std-p': [2,3,4,5,8], 'std-r': [8,9,10], 'std-v': [2,3,4,5]
+};
 
-- TV / Media Stand:
-  - Who's Bringing It: 
-  - Notes/Link: 
+// ══════════════════════════════════════════
+// BUILD UI
+// ══════════════════════════════════════════
 
-- Mini-Fridge (Max 3.6 cu. ft.):
-  - Who's Bringing It: 
-  - Notes/Link: 
+// Build timeline
+function buildTimeline() {
+  const container = document.getElementById('homeTimeline');
+  units.forEach(u => {
+    const col = document.createElement('div');
+    col.className = 'timeline-unit';
+    col.onclick = () => showUnit(u.num);
+    const daysRange = u.days.length > 0 ?
+      `Days ${u.days[0].day}–${u.days[u.days.length-1].day}` : '';
+    col.innerHTML = `
+      <div class="t-node" style="background:${UNIT_COLORS[u.num-1]};">${u.num}</div>
+      <div class="t-label">${u.title.split(' ').slice(0,3).join(' ')}</div>
+      <div class="t-days mono">${daysRange}</div>
+    `;
+    container.appendChild(col);
+  });
+}
 
-- Microwave (Max 0.7 cu. ft.):
-  - Who's Bringing It: 
-  - Notes/Link: 
+// Build unit dropdown
+function buildDropdown() {
+  const menu = document.getElementById('unitDropdown');
+  units.forEach(u => {
+    const a = document.createElement('a');
+    a.href = '#';
+    a.innerHTML = `<span class="unit-dot" style="background:${UNIT_COLORS[u.num-1]};"></span> Unit ${u.num}`;
+    a.title = u.title;
+    a.onclick = (e) => { e.preventDefault(); showUnit(u.num); };
+    menu.appendChild(a);
+  });
+}
 
-- Coffee Maker:
-  - Who's Bringing It: 
-  - Notes/Link: Search for "Keurig K-Mini" -> https://www.google.com/search?q=Keurig+K-Mini
+// Build standards dots
+function buildStandards() {
+  Object.entries(STD_COVERAGE).forEach(([id, unitNums]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    unitNums.forEach(n => {
+      const pill = document.createElement('div');
+      pill.className = 'std-dot-pill';
+      pill.style.background = UNIT_COLORS[n-1]+'18';
+      pill.style.borderColor = UNIT_COLORS[n-1]+'44';
+      pill.style.color = UNIT_COLORS[n-1];
+      pill.innerHTML = `<span style="width:6px;height:6px;border-radius:50%;background:${UNIT_COLORS[n-1]};display:inline-block;"></span> Unit ${n}`;
+      el.appendChild(pill);
+    });
+  });
+}
 
-- Stick Vacuum:
-  - Who's Bringing It: 
-  - Notes/Link: Search for "Bissell Featherweight Stick Vacuum" -> https://www.google.com/search?q=Bissell+Featherweight+Stick+Vacuum
+// Build all unit pages
+function buildUnitPages() {
+  const container = document.getElementById('unitPagesContainer');
+  units.forEach(u => {
+    const page = document.createElement('div');
+    page.className = 'page';
+    page.id = `page-unit${u.num}`;
 
----
-SHARED BATHROOM ITEMS
----
-(We'll share one bathroom. Let's split these.)
+    const color = UNIT_COLORS[u.num-1];
+    const fiveERows = u.fiveE.map(e => `
+      <div class="five-e-row">
+        <div class="five-e-badge">
+          <div class="five-e-dot" style="background:${FIVE_E_COLORS[e.phase]};"></div>
+          <span class="five-e-name" style="color:${FIVE_E_COLORS[e.phase]};">${e.phase}</span>
+        </div>
+        <div class="five-e-text">${e.desc}</div>
+      </div>
+    `).join('');
 
-- Shower Curtain & Liner:
-  - Who's Bringing It: 
+    const stdBadges = u.standards.map(s => `
+      <span class="meta-chip"><span style="width:8px;height:8px;border-radius:50%;background:${color};display:inline-block;"></span>${s}</span>
+    `).join('');
 
-- Bath Mat:
-  - Who's Bringing It: 
+    const dayItems = u.days.map(d => `
+      <div class="day-item" id="day-${d.day}">
+        <div class="day-header" onclick="toggleDay(${d.day})">
+          <span class="day-num mono">Day ${d.day}</span>
+          <span class="day-goal">${d.goal}</span>
+          ${d.tripleE ? `<span class="day-tag tag-3e">3E</span>` : ''}
+          <span class="day-arrow">▶</span>
+        </div>
+        <div class="day-body">
+          <p><strong>Double Architecture:</strong> ${d.arch}</p>
+          ${d.tripleE ? `<p style="margin-top:8px;"><span class="day-tag tag-3e" style="margin-right:4px;">Triple E</span> ${d.tripleE}</p>` : ''}
+        </div>
+      </div>
+    `).join('');
 
-- Bathroom Trash Can:
-  - Who's Bringing It: 
+    page.innerHTML = `
+      <div class="unit-hero" style="background:linear-gradient(135deg, ${color}14 0%, ${color}06 100%); border-bottom: 3px solid ${color}30;">
+        <div class="unit-hero-inner">
+          <div class="unit-num mono" style="color:${color};">Unit ${u.num} of 10 ${u.badge ? `· <span style="background:${color}22;color:${color};padding:2px 10px;border-radius:12px;font-size:10px;">${u.badge}</span>` : ''}</div>
+          <h1 style="color:${UNIT_COLORS[u.num-1] !== '#F9C74F' ? 'var(--navy)' : 'var(--navy)'};">${u.title}</h1>
+          <div class="eq" style="border-color:${color};">"${u.essQ}"</div>
+          <div class="unit-meta">
+            <span class="meta-chip">📅 ${u.days.length} days</span>
+            ${stdBadges}
+            <span class="meta-chip">📖 Practice Packet Available</span>
+          </div>
+        </div>
+      </div>
 
-- Toilet Brush & Cleaning Supplies:
-  - Who's Bringing It: (We can buy these together when we get there)
+      <div class="unit-body">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; margin-bottom:28px; margin-top:32px;">
+          <div class="foundation-box">
+            <div class="fb-icon">💡</div>
+            <div>
+              <div class="fb-label">Big Idea</div>
+              <p>${u.bigIdea}</p>
+            </div>
+          </div>
+          <div style="background:var(--white); border:1px solid rgba(0,0,0,0.08); border-radius:14px; padding:28px; box-shadow:var(--shadow);">
+            <div style="font-family:'DM Mono'; font-size:10px; color:${color}; letter-spacing:.1em; text-transform:uppercase; margin-bottom:8px;">Understand & Question Routine</div>
+            <p style="font-size:13.5px; color:var(--mid); line-height:1.6;">${u.uq}</p>
+          </div>
+        </div>
 
-=====================================
-AUTUMN'S PERSONAL CHECKLIST
-=====================================
+        <div class="phenomenon-card">
+          <div class="phen-header" style="background:${color}10; border-bottom:1px solid ${color}20;">
+            <div class="phen-icon">${u.phenIcon}</div>
+            <div>
+              <div class="phen-label">Anchor Phenomenon</div>
+              <div class="phen-title">${u.phenomenon}</div>
+            </div>
+          </div>
+          <div class="phen-body" style="padding-top:20px;">
+            <div class="phen-dq" style="border-color:${color};">Driving Question: ${u.dq}</div>
+          </div>
+        </div>
 
-**BEDDING & COMFORT**
-[ ] Twin XL Mattress Topper
-[ ] Twin XL Mattress Protector
-[ ] Sleeping Pillows (2)
-[ ] Twin XL Sheet Sets (2)
-[ ] Twin XL Comforter
-[ ] Headboard
+        <div style="margin-bottom:10px;">
+          <div style="font-family:'DM Mono'; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--mid); margin-bottom:14px;">The 5E Storyline</div>
+          <div class="five-e">${fiveERows}</div>
+        </div>
 
-**STORAGE, DECOR & ORGANIZATION**
-[ ] Under-Bed Storage Bins
-[ ] Nightstand
-[ ] Velvet Hangers
-[ ] Hanging Closet Organizer
-[ ] Over-the-Door Organizer
-[ ] Desk Organizer
-[ ] Fairy Lights
-[ ] Wall Tapestry
-[ ] Photo Display
-[ ] Plants
-[ ] Throw Blanket
-[ ] Decorative Pillows
+        <div class="packet-box student-only" style="margin-top:24px;">
+          <div>
+            <h4>Unit ${u.num} Practice Packet</h4>
+            <p>All 5 sections: Phenomenon Launch, Evidence-Gathering, Model-Building, Transfer, Synthesis CER</p>
+          </div>
+          <button class="download-btn" onclick="alert('In the live Google Site, this links to the Unit ${u.num} .docx download.')">⬇ Download Packet</button>
+        </div>
 
-**BATHROOM & PERSONAL**
-[ ] Mesh Shower Caddy
-[ ] Bath Towels (2 sets)
-[ ] Full-Length Mirror
+        <!-- TEACHER SECTION -->
+        <div class="teacher-only teacher-section" style="margin-top:32px;">
+          <div class="teacher-banner">
+            <span>📋</span>
+            <span><strong>Teacher View</strong> — Daily Lesson Plans with Double Architecture rhythm. Click any day to expand.</span>
+          </div>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+            <div style="font-family:'DM Mono'; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--mid);">Daily Lesson Plans — Unit ${u.num}</div>
+            <div style="display:flex; gap:8px;">
+              <button onclick="expandAllDays(${u.num})" style="padding:5px 12px; border:1px solid var(--teal); border-radius:6px; background:transparent; color:var(--teal); font-size:11px; cursor:pointer;">Expand All</button>
+              <button onclick="collapseAllDays(${u.num})" style="padding:5px 12px; border:1px solid rgba(0,0,0,0.15); border-radius:6px; background:transparent; color:var(--mid); font-size:11px; cursor:pointer;">Collapse</button>
+            </div>
+          </div>
+          <div class="day-accordion" id="accordion-unit${u.num}">${dayItems}</div>
+        </div>
+      </div>
+    `;
+    container.appendChild(page);
+  });
+}
 
-**TECH & STUDY**
-[ ] Laptop & Charger
-[ ] Phone & Charger
-[ ] Surge Protector
-[ ] LED Desk Lamp
-[ ] Backpack
-[ ] Fan
+// ══════════════════════════════════════════
+// NAV FUNCTIONS
+// ══════════════════════════════════════════
+let currentPage = 'home';
 
-=====================================
-JESS'S PERSONAL CHECKLIST
-=====================================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(`page-${id}`)?.classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById(`nav-${id}`)?.classList.add('active');
+  currentPage = id;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
 
-**BEDDING & COMFORT**
-[ ] Twin XL Mattress Topper
-[ ] Twin XL Mattress Protector
-[ ] Sleeping Pillows (2)
-[ ] Twin XL Sheet Sets (2)
-[ ] Twin XL Comforter
-[ ] Headboard
+function showUnit(num) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(`page-unit${num}`)?.classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  currentPage = `unit${num}`;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
 
-**STORAGE, DECOR & ORGANIZATION**
-[ ] Under-Bed Storage Bins
-[ ] Nightstand
-[ ] Velvet Hangers
-[ ] Hanging Closet Organizer
-[ ] Over-the-Door Organizer
-[ ] Desk Organizer
-[ ] Fairy Lights
-[ ] Wall Tapestry
-[ ] Photo Display
-[ ] Plants
-[ ] Throw Blanket
-[ ] Decorative Pillows
+// ══════════════════════════════════════════
+// VIEW TOGGLE
+// ══════════════════════════════════════════
+function setView(v) {
+  document.body.className = v + '-view';
+  document.getElementById('btn-student').classList.toggle('active', v==='student');
+  document.getElementById('btn-teacher').classList.toggle('active', v==='teacher');
+}
 
-**BATHROOM & PERSONAL**
-[ ] Mesh Shower Caddy
-[ ] Bath Towels (2 sets)
-[ ] Full-Length Mirror
+// ══════════════════════════════════════════
+// DAY ACCORDION
+// ══════════════════════════════════════════
+function toggleDay(dayNum) {
+  const el = document.getElementById(`day-${dayNum}`);
+  el?.classList.toggle('open');
+}
 
-**TECH & STUDY**
-[ ] Laptop & Charger
-[ ] Phone & Charger
-[ ] Surge Protector
-[ ] LED Desk Lamp
-[ ] Backpack
-[ ] Fan
-`;
-            
-            const planningHubVisual = document.getElementById('planning-hub-visual');
-            planningHubVisual.innerHTML = `
-                <div class="planning-hub-card bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-2xl font-bold mb-4 text-[#C06C56]">Shared Items</h3>
-                    <h4 class="font-bold mt-4 mb-2">Living Room / Kitchenette</h4>
-                    <ul class="list-disc text-gray-600 space-y-2">
-                        <li>Area Rug</li>
-                        <li>Futon or Small Couch</li>
-                        <li>Coffee Table</li>
-                        <li>TV / Media Stand</li>
-                        <li>Mini-Fridge</li>
-                        <li>Microwave</li>
-                        <li>Coffee Maker</li>
-                        <li>Stick Vacuum</li>
-                    </ul>
-                    <h4 class="font-bold mt-6 mb-2">Bathroom</h4>
-                    <ul class="list-disc text-gray-600 space-y-2">
-                        <li>Shower Curtain & Liner</li>
-                        <li>Bath Mat</li>
-                        <li>Trash Can</li>
-                        <li>Cleaning Supplies</li>
-                    </ul>
-                </div>
-                <div class="planning-hub-card bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-2xl font-bold mb-4 text-[#C06C56]">Autumn's List</h3>
-                    <h4 class="font-bold mt-4 mb-2">Bedding & Comfort</h4>
-                    <ul class="list-disc text-gray-600"><li>Mattress Topper</li><li>Protector</li><li>Pillows</li><li>Sheets</li><li>Comforter</li></ul>
-                    <h4 class="font-bold mt-6 mb-2">Storage & Decor</h4>
-                    <ul class="list-disc text-gray-600"><li>Nightstand</li><li>Hangers</li><li>Organizers</li><li>Fairy Lights</li><li>Tapestry</li><li>Photo Display</li><li>Plants</li><li>Throw Blanket</li><li>Pillows</li></ul>
-                    <h4 class="font-bold mt-6 mb-2">Tech & Other</h4>
-                    <ul class="list-disc text-gray-600"><li>Surge Protector</li><li>Desk Lamp</li><li>Fan</li><li>Mirror</li></ul>
-                </div>
-                <div class="planning-hub-card bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-2xl font-bold mb-4 text-[#C06C56]">Jess's List</h3>
-                    <h4 class="font-bold mt-4 mb-2">Bedding & Comfort</h4>
-                    <ul class="list-disc text-gray-600"><li>Mattress Topper</li><li>Protector</li><li>Pillows</li><li>Sheets</li><li>Comforter</li></ul>
-                    <h4 class="font-bold mt-6 mb-2">Storage & Decor</h4>
-                    <ul class="list-disc text-gray-600"><li>Nightstand</li><li>Hangers</li><li>Organizers</li><li>Fairy Lights</li><li>Tapestry</li><li>Photo Display</li><li>Plants</li><li>Throw Blanket</li><li>Pillows</li></ul>
-                    <h4 class="font-bold mt-6 mb-2">Tech & Other</h4>
-                    <ul class="list-disc text-gray-600"><li>Surge Protector</li><li>Desk Lamp</li><li>Fan</li><li>Mirror</li></ul>
-                </div>
-            `;
+function expandAllDays(unitNum) {
+  document.querySelectorAll(`#accordion-unit${unitNum} .day-item`).forEach(el => el.classList.add('open'));
+}
+function collapseAllDays(unitNum) {
+  document.querySelectorAll(`#accordion-unit${unitNum} .day-item`).forEach(el => el.classList.remove('open'));
+}
 
-
-            const copyBtn = document.getElementById('copy-btn');
-            const copySuccess = document.getElementById('copy-success');
-            copyBtn.addEventListener('click', () => {
-                const textToCopy = gdocTemplate.trim();
-                const textarea = document.createElement('textarea');
-                textarea.value = textToCopy;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-
-                copySuccess.classList.remove('hidden');
-                setTimeout(() => {
-                    copySuccess.classList.add('hidden');
-                }, 2000);
-            });
-
-
-            // Populate Rules
-            const rulesContainer = document.getElementById('rules-container');
-            rulesData.forEach((rule, index) => {
-                const ruleEl = document.createElement('div');
-                ruleEl.className = 'border-b border-gray-200 py-4';
-                ruleEl.innerHTML = `
-                    <button class="w-full text-left flex justify-between items-center focus:outline-none">
-                        <span class="text-lg font-medium text-gray-700">${rule.title}</span>
-                        <span class="transform transition-transform duration-300">▼</span>
-                    </button>
-                    <div class="mt-2 text-gray-600 max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
-                        <p class="pt-2">${rule.content}</p>
-                    </div>
-                `;
-                rulesContainer.appendChild(ruleEl);
-            });
-            rulesContainer.addEventListener('click', e => {
-                const button = e.target.closest('button');
-                if (button) {
-                    const content = button.nextElementSibling;
-                    const arrow = button.querySelector('span:last-child');
-                    if (content.style.maxHeight && content.style.maxHeight !== '0px') {
-                        content.style.maxHeight = '0px';
-                        arrow.style.transform = 'rotate(0deg)';
-                    } else {
-                        content.style.maxHeight = content.scrollHeight + 'px';
-                        arrow.style.transform = 'rotate(180deg)';
-                    }
-                }
-            });
-
-            // Populate Shopping
-            const shoppingGrid = document.getElementById('shopping-grid');
-            const filterContainer = document.getElementById('filter-container');
-            const categories = ['All', ...new Set(shoppingData.map(item => item.category))];
-
-            categories.forEach(category => {
-                const button = document.createElement('button');
-                button.textContent = category;
-                button.className = 'filter-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-100';
-                if (category === 'All') {
-                    button.classList.add('active');
-                }
-                button.addEventListener('click', () => {
-                    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    renderShoppingList(category);
-                });
-                filterContainer.appendChild(button);
-            });
-
-            const renderShoppingList = (filter = 'All') => {
-                shoppingGrid.innerHTML = '';
-                const filteredData = filter === 'All' ? shoppingData : shoppingData.filter(item => item.category === filter);
-                
-                filteredData.forEach((item, index) => {
-                    const uniqueIndex = shoppingData.indexOf(item);
-                    const card = document.createElement('div');
-                    card.className = 'bg-white rounded-lg shadow-lg overflow-hidden flex flex-col';
-                    card.innerHTML = `
-                        <div class="p-6 flex-grow">
-                            <p class="text-sm font-semibold text-[#C06C56]">${item.category}</p>
-                            <h3 class="text-xl font-bold text-gray-800 mt-1 mb-4">${item.item}</h3>
-                            <div class="space-y-4" id="options-${uniqueIndex}">
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 px-6 py-4 flex justify-around">
-                            <button data-option="topPick" data-index="${uniqueIndex}" class="option-btn text-sm font-semibold text-gray-700 p-2 rounded-md bg-gray-200 w-full mx-1">Top Pick</button>
-                            <button data-option="bestValue" data-index="${uniqueIndex}" class="option-btn text-sm font-semibold text-gray-700 p-2 rounded-md bg-white w-full mx-1">Best Value</button>
-                            <button data-option="styleFocus" data-index="${uniqueIndex}" class="option-btn text-sm font-semibold text-gray-700 p-2 rounded-md bg-white w-full mx-1">Style/Feature</button>
-                        </div>
-                    `;
-                    shoppingGrid.appendChild(card);
-                    displayOption(uniqueIndex, 'topPick');
-                });
-            };
-
-            const displayOption = (itemIndex, optionType) => {
-                const item = shoppingData[itemIndex];
-                if (!item) return;
-                const optionData = item[optionType];
-                const optionsContainer = document.getElementById(`options-${itemIndex}`);
-                optionsContainer.innerHTML = `
-                    <div>
-                        <h4 class="font-semibold text-gray-700">${optionData.name}</h4>
-                        <p class="text-gray-600 text-sm mt-1 mb-3">${optionData.desc}</p>
-                        <a href="${optionData.link}" target="_blank" class="inline-block text-white bg-[#C06C56] hover:bg-opacity-90 font-bold py-2 px-4 rounded-md text-sm transition-colors">
-                           Search for Product
-                        </a>
-                    </div>
-                `;
-            };
-
-            shoppingGrid.addEventListener('click', (e) => {
-                if (e.target.classList.contains('option-btn')) {
-                    const itemIndex = parseInt(e.target.dataset.index);
-                    const optionType = e.target.dataset.option;
-
-                    e.target.parentElement.querySelectorAll('.option-btn').forEach(btn => {
-                        btn.classList.remove('bg-gray-200');
-                        btn.classList.add('bg-white');
-                    });
-                    e.target.classList.add('bg-gray-200');
-                    e.target.classList.remove('bg-white');
-
-                    displayOption(itemIndex, optionType);
-                }
-            });
-
-            renderShoppingList();
-            
-            const checklistContainer = document.getElementById('checklist-container');
-            checklistData.forEach((item, index) => {
-                const checkEl = document.createElement('div');
-                checkEl.className = 'checklist-item flex items-center';
-                checkEl.innerHTML = `
-                    <input type="checkbox" id="check-${index}" class="h-4 w-4 text-[#C06C56] border-gray-300 rounded focus:ring-[#C06C56]">
-                    <label for="check-${index}" class="ml-3 block text-sm text-gray-700 cursor-pointer">${item}</label>
-                `;
-                checklistContainer.appendChild(checkEl);
-            });
-
-            const menuBtn = document.getElementById('menu-btn');
-            const mobileMenu = document.getElementById('mobile-menu');
-            menuBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-             mobileMenu.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-            });
-
-            const ctx = document.getElementById('topperChart').getContext('2d');
-            const topperChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Best Value (Linenspa)', 'Top Pick (ViscoSoft)', 'Style/Feature (Tempur-Pedic)'],
-                    datasets: [{
-                        label: 'Value Score',
-                        data: [85, 92, 98],
-                        backgroundColor: [
-                            'rgba(217, 163, 150, 0.6)',
-                            'rgba(192, 108, 86, 0.6)',
-                            'rgba(148, 82, 64, 0.6)'
-                        ],
-                        borderColor: [
-                            'rgba(217, 163, 150, 1)',
-                            'rgba(192, 108, 86, 1)',
-                            'rgba(148, 82, 64, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { beginAtZero: true, max: 100, ticks: { font: { family: "'Inter', sans-serif" } } },
-                        y: { ticks: { font: { family: "'Inter', sans-serif", size: 14 } } }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { enabled: true, titleFont: { family: "'Lora', serif" }, bodyFont: { family: "'Inter', sans-serif" } }
-                    }
-                }
-            });
-
-            const sections = document.querySelectorAll('section');
-            const navLinks = document.querySelectorAll('.nav-link');
-
-            window.onscroll = () => {
-                let current = '';
-                sections.forEach(section => {
-                    const sectionTop = section.offsetTop;
-                    if (pageYOffset >= sectionTop - 68) {
-                        current = section.getAttribute('id');
-                    }
-                });
-
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href').includes(current)) {
-                        link.classList.add('active');
-                    }
-                });
-            };
-
-        });
-    </script>
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+buildTimeline();
+buildDropdown();
+buildStandards();
+buildUnitPages();
+</script>
 </body>
 </html>
-
